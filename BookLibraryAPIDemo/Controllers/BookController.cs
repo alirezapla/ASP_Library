@@ -7,41 +7,40 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace BookLibraryAPIDemo.API.Controllers
 {
-    [Authorize]
+    // [Authorize]
+    [Route("books")]
     public class BookController : BaseApiController
     {
-
-
-        [HttpPost("CreateBook")]
+        [HttpPost]
         public async Task<IActionResult> CreateBookAsync([FromBody] CreateBookDTO model)
         {
-            return Ok(await Mediator.Send(new CreateBook { Book = model }));
+            return Ok(await Mediator.Send(new CreateBook {Book = model}));
         }
 
-        [HttpGet("GetAllBook")]
+        [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PagedResult<BookDTO>))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetBooksAsync([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
         {
-            return Ok(await Mediator.Send(new GetAllBook{ PageNumber = pageNumber, PageSize = pageSize }));
+            return Ok(await Mediator.Send(new GetAllBook {PageNumber = pageNumber, PageSize = pageSize}));
         }
 
-        [HttpGet("books/{id}")]
-        public async Task<IActionResult> GetBookByIdAsync(int id)
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetBookByIdAsync(string id)
         {
-            return Ok(await Mediator.Send(new GetBookById() { BookId = id }));
+            return Ok(await Mediator.Send(new GetBookById() {BookId = id}));
         }
 
-        [HttpPut]
+        [HttpPut("{id}")]
         public async Task<IActionResult> UpdateBookAsync([FromBody] BookDTO model)
         {
-            return Ok(await Mediator.Send(new UpdateBook { Book = model }));
+            return Ok(await Mediator.Send(new UpdateBook {Book = model}));
         }
 
-        [HttpDelete("books/{id}")]
-        public async Task<IActionResult> DeleteBookAsync([FromRoute] int id)
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteBookAsync([FromRoute] string id)
         {
-            return Ok(await Mediator.Send(new DeleteBook { BookId = id }));
+            return Ok(await Mediator.Send(new DeleteBook {BookId = id}));
         }
     }
 }

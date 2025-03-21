@@ -2,46 +2,46 @@
 using BookLibraryAPIDemo.Application.Commands.Authors;
 using BookLibraryAPIDemo.Application.DTO;
 using BookLibraryAPIDemo.Application.Queries.Authors;
+using BookLibraryAPIDemo.Infrastructure.Repositories;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BookLibraryAPIDemo.Controllers
 {
     //[Authorize]
+    [Route("authors")]
     public class AuthorsController : BaseApiController
     {
-        [HttpPost("CreateAuthor")]
+        [HttpPost]
         public async Task<IActionResult> CreateAuthorAsync([FromBody] CreateAuthorDTO model)
         {
-            // Replace 'CreateAuthor' with your actual command
-            return Ok(await Mediator.Send(new CreateAuthor { Author = model }));
+            return Ok(await Mediator.Send(new CreateAuthor {Author = model}));
         }
 
-        [HttpGet("GetAllAuthors")]
-        public async Task<IActionResult> GetAuthorsAsync()
+        [HttpGet]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PagedResult<AuthorDTO>))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> GetAuthorsAsync([FromQuery] int pageNumber, [FromQuery] int pageSize)
         {
-            // Replace 'GetAllAuthors' with your actual query
-            return Ok(await Mediator.Send(new GetAllAuthors()));
+            return Ok(await Mediator.Send(new GetAllAuthors() {PageNumber = pageNumber, PageSize = pageSize}));
         }
 
-        [HttpGet("authors/{id}")]
-        public async Task<IActionResult> GetAuthorByIdAsync(int id)
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetAuthorByIdAsync(string id)
         {
-            // Replace 'GetAuthorById' with your actual query
-            return Ok(await Mediator.Send(new GetAuthorById() { AuthorId = id }));
+            return Ok(await Mediator.Send(new GetAuthorById() {AuthorId = id}));
         }
 
-        [HttpPut("UpdateAuthor/{id}")]
-        public async Task<IActionResult> UpdateAuthorAsync([FromRoute] int id, [FromBody] UpdateAuthorDTO model)
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateAuthorAsync([FromRoute] string id, [FromBody] UpdateAuthorDTO model)
         {
-            return Ok(await Mediator.Send(new UpdateAuthor { Id = id, Author = model }));
+            return Ok(await Mediator.Send(new UpdateAuthor {Id = id, Author = model}));
         }
 
 
-        [HttpDelete("authors/{id}")]
-        public async Task<IActionResult> DeleteAuthorAsync([FromRoute] int id)
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteAuthorAsync([FromRoute] string id)
         {
-            // Replace 'DeleteAuthor' with your actual command
-            return Ok(await Mediator.Send(new DeleteAuthor { AuthorId = id }));
+            return Ok(await Mediator.Send(new DeleteAuthor {AuthorId = id}));
         }
     }
 }
