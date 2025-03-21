@@ -9,31 +9,31 @@ namespace BookLibraryAPIDemo.Application.Queries.Books
 {
     public class GetBookById : IRequest<BookDTO>
     {
+        public string BookId { get; set; }
+    }
 
-        public int BookId { get; set; }
+    public class GetBookByIdHandler : IRequestHandler<GetBookById, BookDTO>
+    {
+        private readonly IBaseRepository<Book> _repository;
+        private readonly IMapper _mapper;
 
-
-
-        public class GetBookByIdHandler : IRequestHandler<GetBookById, BookDTO>
+        public GetBookByIdHandler(IBaseRepository<Book> repository, IMapper mapper)
         {
+            _repository = repository;
+            _mapper = mapper;
+        }
 
-            private readonly IBaseRepository<Book> _repository;
-            private readonly IMapper _mapper;
-
-            public GetBookByIdHandler(IBaseRepository<Book> repository, IMapper mapper)
+        public async Task<BookDTO> Handle(GetBookById request, CancellationToken cancellationToken)
+        {
+            var book = await _repository.GetByIdAsync(request.BookId);
+            if (book == null)
             {
-                _repository = repository;
-                _mapper = mapper;
+                throw new BookNotFoundException(request.BookId);
             }
 
-            public async Task<BookDTO> Handle(GetBookById request, CancellationToken cancellationToken)
-            {
-
-                var book = await _repository.GetByIdAsync(request.BookId);
-                if (book == null) { throw new BookNotFoundException(request.BookId); }
-                var bookDTO = _mapper.Map<BookDTO>(book);
-                return bookDTO;
-            }
+            var bookDTO = _mapper.Map<BookDTO>(book);
+            return bookDTO;
         }
     }
 }
+

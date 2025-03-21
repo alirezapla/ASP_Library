@@ -6,11 +6,10 @@ using MediatR;
 
 namespace BookLibraryAPIDemo.Application.Commands.Authors
 {
-
     public class UpdateAuthor : IRequest<AuthorDTO>
     {
         public UpdateAuthorDTO Author { get; set; }
-        public int Id { get; set; }
+        public string Id { get; set; }
     }
 
     public class UpdateAuthorHandler : IRequestHandler<UpdateAuthor, AuthorDTO>
@@ -39,8 +38,5 @@ namespace BookLibraryAPIDemo.Application.Commands.Authors
 
             return _mapper.Map<AuthorDTO>(existingAuthor);
         }
-
-
     }
-
 }

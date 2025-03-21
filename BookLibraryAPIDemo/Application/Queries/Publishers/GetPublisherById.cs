@@ -9,7 +9,7 @@ namespace BookLibraryAPIDemo.Application.Queries.Publishers
 {
     public class GetPublisherById : IRequest<PublisherDTO>
     {
-        public int PublisherId { get; set; }
+        public string PublisherId { get; set; }
 
         public class GetPublisherByIdHandler : IRequestHandler<GetPublisherById, PublisherDTO>
         {

@@ -8,7 +8,7 @@ namespace BookLibraryAPIDemo.Application.Commands.Categorys
 
     public class DeleteCategory : IRequest<string>
     {
-        public int CategoryId { get; set; }
+        public string CategoryId { get; set; }
     }
 
     public class DeleteCategoryHandler : IRequestHandler<DeleteCategory, string>

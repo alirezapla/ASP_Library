@@ -9,7 +9,7 @@ namespace BookLibraryAPIDemo.Application.Commands.Publishers
     public class UpdatePublisher : IRequest<PublisherDTO>
     {
         public UpdatePublisherDTO Publisher { get; set; }
-        public int Id { get; set; }
+        public string Id { get; set; }
     }
 
 

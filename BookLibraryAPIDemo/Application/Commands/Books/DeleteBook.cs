@@ -5,12 +5,12 @@ using MediatR;
 
 namespace BookLibraryAPIDemo.Application.Commands.Books
 {
-    public class DeleteBook : IRequest<Unit>
+    public class DeleteBook : IRequest<string>
     {
-        public int BookId { get; set; }
+        public string BookId { get; set; }
 
 
-        public class DeleteBookHandler : IRequestHandler<DeleteBook, Unit>
+        public class DeleteBookHandler : IRequestHandler<DeleteBook, string>
         {
 
             private readonly IBaseRepository<Book> _repository;
@@ -20,13 +20,14 @@ namespace BookLibraryAPIDemo.Application.Commands.Books
                 _repository = repository;
             }
 
-            public async Task<Unit> Handle(DeleteBook request, CancellationToken cancellationToken)
+            public async Task<string> Handle(DeleteBook request, CancellationToken cancellationToken)
             {
                 var book = await _repository.GetByIdAsync(request.BookId);
                 if (book == null) { throw new BookNotFoundException(request.BookId); }
                 await _repository.DeleteAsync(book);
 
-                return Unit.Value;
+                return $"Book with Id {request.BookId} has been deleted";
+
             }
         }
     }

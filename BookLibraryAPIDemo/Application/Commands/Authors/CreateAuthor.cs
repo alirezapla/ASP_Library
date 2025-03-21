@@ -6,9 +6,6 @@ using MediatR;
 
 namespace BookLibraryAPIDemo.Application.Commands.Authors
 {
-
-
-
     public class CreateAuthor : IRequest<AuthorDTO>
 
     {
@@ -33,8 +30,5 @@ namespace BookLibraryAPIDemo.Application.Commands.Authors
                 return _mapper.Map<AuthorDTO>(author);
             }
         }
-
-
     }
-
 }

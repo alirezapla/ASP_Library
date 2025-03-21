@@ -2,29 +2,40 @@
 using BookLibraryAPIDemo.Application.DTO;
 using BookLibraryAPIDemo.Domain.Entities;
 using BookLibraryAPIDemo.Infrastructure.Interfaces;
+using BookLibraryAPIDemo.Infrastructure.Repositories;
 using MediatR;
 
 namespace BookLibraryAPIDemo.Application.Queries.BookLibraryAPICategory
 {
+    public class GetAllCategories : IRequest<PagedResult<CategoryDTO>>
+    {
+        public int PageNumber { get; set; } = 1;
+        public int PageSize { get; set; } = 10;
+    }
 
-    public class GetAllCategories : IRequest<List<CategoryDTO>> { }
-
-    public class GetAllCategoriesHandler : IRequestHandler<GetAllCategories, List<CategoryDTO>>
+    public class GetAllCategoriesHandler : IRequestHandler<GetAllCategories, PagedResult<CategoryDTO>>
     {
         private readonly IBaseRepository<Category> _repository;
         private readonly IMapper _mapper;
+
         public GetAllCategoriesHandler(IBaseRepository<Category> repository, IMapper mapper)
         {
             _repository = repository;
             _mapper = mapper;
         }
 
-        public async Task<List<CategoryDTO>> Handle(GetAllCategories request, CancellationToken cancellationToken)
+        public async Task<PagedResult<CategoryDTO>> Handle(GetAllCategories request,
+            CancellationToken cancellationToken)
         {
-            var geAllCategories = await _repository.GetAllAsync();
-            var results = _mapper.Map<List<CategoryDTO>>(geAllCategories);
-            return results;
-
+            var (allCategories, totalCount) = await _repository.GetAllAsync(request.PageNumber, request.PageSize);
+            var results = _mapper.Map<List<CategoryDTO>>(allCategories);
+            return new PagedResult<CategoryDTO>
+            {
+                Items = results,
+                TotalCount = totalCount,
+                PageNumber = request.PageNumber,
+                PageSize = request.PageSize
+            };
         }
     }
 }

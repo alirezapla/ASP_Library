@@ -9,7 +9,7 @@ namespace BookLibraryAPIDemo.Application.Commands.Categorys
 
     public class UpdateCategory : IRequest<CategoryDTO>
     {
-        public int Id { get; set; }
+        public string Id { get; set; }
         public UpdateCategoryDTO Category { get; set; }
     }
 

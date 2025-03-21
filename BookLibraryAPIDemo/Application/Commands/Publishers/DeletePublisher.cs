@@ -7,7 +7,7 @@ namespace BookLibraryAPIDemo.Application.Commands.Publishers
 {
     public class DeletePublisher : IRequest<string>
     {
-        public int publisherId { get; set; }
+        public string publisherId { get; set; }
 
 
         public class DeletePublisherHandler : IRequestHandler<DeletePublisher, string>

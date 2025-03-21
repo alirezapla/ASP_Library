@@ -10,7 +10,7 @@ namespace BookLibraryAPIDemo.Application.Queries.BookLibraryAPICategory
 
     public class GetCategoryById : IRequest<CategoryDTO>
     {
-        public int CategoryId { get; set; }
+        public string CategoryId { get; set; }
     }
 
     public class GetCategoryByIdHandler : IRequestHandler<GetCategoryById, CategoryDTO>
