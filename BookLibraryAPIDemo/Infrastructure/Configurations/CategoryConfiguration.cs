@@ -14,21 +14,39 @@ namespace BookLibraryAPIDemo.Infrastructure.Configurations
             entity.HasData(
                 new Category
                 {
-                    Id = 1,
+                    Id = Guid.NewGuid().ToString(),
                     Name = "Tech",
-                    Description = "This is about Tech"
+                    Description = "This is about Tech",
+                    CreatedDate = DateTime.UtcNow,
+                    CreatedBy = "system",
+                    UpdatedDate = null,
+                    UpdatedBy = "",
+                    IsDeleted = false,
+                    DeletedBy = "",
                 },
                 new Category
                 {
-                    Id = 2,
+                    Id = Guid.NewGuid().ToString(),
                     Name = "Finance ",
-                    Description = "Books on Finance "
+                    Description = "Books on Finance ",
+                    CreatedDate = DateTime.UtcNow,
+                    CreatedBy = "system",
+                    UpdatedDate = null,
+                    UpdatedBy = "",
+                    IsDeleted = false,
+                    DeletedBy = "",
                 },
                 new Category
                 {
-                    Id = 3,
+                    Id = Guid.NewGuid().ToString(),
                     Name = "Science",
-                    Description = "Books on science and nature"
+                    Description = "Books on science and nature",
+                    CreatedDate = DateTime.UtcNow,
+                    CreatedBy = "system",
+                    UpdatedDate = null,
+                    UpdatedBy = "",
+                    IsDeleted = false,
+                    DeletedBy = "",
                 }
                );
         }

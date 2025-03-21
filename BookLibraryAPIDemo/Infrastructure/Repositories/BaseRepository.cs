@@ -43,34 +43,10 @@ namespace BookLibraryAPIDemo.Infrastructure.Repositories
                 throw new RepositoryException("An error occurred while deleting the entity.", ex);
             }
         }
-
+        
         public async Task<List<T>> GetAllAsync()
         {
             return await _context.Set<T>().AsNoTracking().ToListAsync();
-        }
-        
-        public async Task<List<T>> GetAllBookAsync(ISpecification<T> spec = null)
-        {
-
-            var query = _context.Set<T>().AsQueryable();
-
-            if (spec != null)
-            {
-                if (spec.Criteria != null)
-                {
-                    query = query.Where(spec.Criteria);
-                }
-
-                if (spec.Includes != null)
-                {
-                    foreach (var include in spec.Includes)
-                    {
-                        query = query.Include(include);
-                    }
-                }
-            }
-
-            return await query.ToListAsync();
         }
         
 
@@ -103,7 +79,7 @@ namespace BookLibraryAPIDemo.Infrastructure.Repositories
             return (items, totalCount);
         }
 
-        public async Task<T> GetByIdAsync(int id)
+        public async Task<T> GetByIdAsync(string id)
         {
             return await _context.Set<T>().FindAsync(id);
         }

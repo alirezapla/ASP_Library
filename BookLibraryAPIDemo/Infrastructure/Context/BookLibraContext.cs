@@ -19,6 +19,8 @@ namespace BookLibraryAPIDemo.Infrastructure.Context
         public DbSet<Author> Authors { get; set; }
         public DbSet<Publisher> Publishers { get; set; }
         public DbSet<Category> Categories { get; set; }
+        public DbSet<Review> Reviews { get; set; }
+        public DbSet<BookDetail> BookDetails { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder builder)
@@ -55,21 +57,24 @@ namespace BookLibraryAPIDemo.Infrastructure.Context
                 switch (entry.State)
                 {
                     case EntityState.Added:
-                        entity.CreatedAt = DateTime.UtcNow;
+                        entity.CreatedDate = DateTime.UtcNow;
                         entity.CreatedBy = currentUser;
+                        entity.UpdatedDate = null;
+                        entity.UpdatedBy = "";
+                        entity.IsDeleted = false;
+                        entity.DeletedDate = null;
+                        entity.DeletedBy = "";
                         break;
                     case EntityState.Modified:
-                        entity.ModifiedAt = DateTime.UtcNow;
-                        entity.ModifiedBy = currentUser;
-                        break;
-                    case EntityState.Detached:
-                        break;
-                    case EntityState.Unchanged:
+                        entity.UpdatedDate = DateTime.UtcNow;
+                        entity.UpdatedBy = currentUser;
                         break;
                     case EntityState.Deleted:
+                        entry.State = EntityState.Modified;
+                        entity.IsDeleted = true;
+                        entity.DeletedDate = DateTime.UtcNow;
+                        entity.DeletedBy = currentUser;
                         break;
-                    default:
-                        throw new ArgumentOutOfRangeException();
                 }
             }
         }

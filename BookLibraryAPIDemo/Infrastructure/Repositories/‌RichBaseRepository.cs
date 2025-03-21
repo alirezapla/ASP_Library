@@ -64,7 +64,7 @@ public class RichBaseRepository<T> : IBaseRepository<T> where T : class
             throw new RepositoryException("An error occurred while deleting the entity.", ex);
         }
     }
-
+    
     public async Task<(List<T> Items, int TotalCount)> GetAllAsync(int pageNumber, int pageSize, ISpecification<T> spec = null)
     {
         var query = _context.Set<T>().AsQueryable();
@@ -99,7 +99,7 @@ public class RichBaseRepository<T> : IBaseRepository<T> where T : class
         throw new NotImplementedException();
     }
     
-    public async Task<T> GetByIdAsync(int id)
+    public async Task<T> GetByIdAsync(string id)
     {
         return await _context.Set<T>().FindAsync(id);
     }

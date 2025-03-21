@@ -10,11 +10,8 @@ namespace BookLibraryAPIDemo.Infrastructure.Configurations
         {
             entity.HasKey(b => b.Id);
             entity.Property(b => b.Title).IsRequired();
-            entity.Property(b => b.Description).IsRequired(false);
             entity.Property(b => b.AuthorId).IsRequired();
             entity.Property(b => b.Price).IsRequired();
-            entity.Property(b => b.CreatedDate).IsRequired();
-            entity.Property(b => b.UpdatedDate).IsRequired();
             entity.Property(b => b.PublisherId).IsRequired();
             entity.HasOne(b => b.Category)
                 .WithMany(c => c.Books)
@@ -25,6 +22,12 @@ namespace BookLibraryAPIDemo.Infrastructure.Configurations
             entity.HasOne(b => b.Publisher)
                 .WithMany(p => p.Books)
                 .HasForeignKey(b => b.PublisherId);
+            entity.HasMany<Review>(b => b.Reviews)
+                .WithOne(r => r.Book)
+                .HasForeignKey(r => r.BookId);
+            entity.HasOne(b => b.BookDetail)
+                .WithOne(bd => bd.Book)
+                .HasForeignKey<BookDetail>(bd => bd.BookId);
         }
     }
 }
