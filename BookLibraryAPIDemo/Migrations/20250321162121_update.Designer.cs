@@ -4,6 +4,7 @@ using BookLibraryAPIDemo.Infrastructure.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BookLibraryAPIDemo.Migrations
 {
     [DbContext(typeof(BookLibraryContext))]
-    partial class BookLibraryContextModelSnapshot : ModelSnapshot
+    [Migration("20250321162121_update")]
+    partial class update
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -81,6 +84,10 @@ namespace BookLibraryAPIDemo.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
+                    b.Property<string>("BookDetailId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("CategoryId")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
@@ -109,6 +116,13 @@ namespace BookLibraryAPIDemo.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
+                    b.Property<string>("ReviewId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("ReviewId1")
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -127,6 +141,10 @@ namespace BookLibraryAPIDemo.Migrations
                     b.HasIndex("CategoryId");
 
                     b.HasIndex("PublisherId");
+
+                    b.HasIndex("ReviewId");
+
+                    b.HasIndex("ReviewId1");
 
                     b.ToTable("Books");
                 });
@@ -228,9 +246,9 @@ namespace BookLibraryAPIDemo.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "4a6e3e51-bb20-46c0-be5a-5acd66a16503",
+                            Id = "b18a26f2-78f5-414b-8bad-1e6190821bb9",
                             CreatedBy = "system",
-                            CreatedDate = new DateTime(2025, 3, 21, 20, 47, 44, 596, DateTimeKind.Utc).AddTicks(2164),
+                            CreatedDate = new DateTime(2025, 3, 21, 16, 21, 21, 201, DateTimeKind.Utc).AddTicks(5497),
                             DeletedBy = "",
                             Description = "This is about Tech",
                             IsDeleted = false,
@@ -239,9 +257,9 @@ namespace BookLibraryAPIDemo.Migrations
                         },
                         new
                         {
-                            Id = "7814eceb-e25b-4760-aff3-92818913f082",
+                            Id = "198dd69c-77b6-46d0-bb44-54b9bee367ed",
                             CreatedBy = "system",
-                            CreatedDate = new DateTime(2025, 3, 21, 20, 47, 44, 596, DateTimeKind.Utc).AddTicks(2181),
+                            CreatedDate = new DateTime(2025, 3, 21, 16, 21, 21, 201, DateTimeKind.Utc).AddTicks(5514),
                             DeletedBy = "",
                             Description = "Books on Finance ",
                             IsDeleted = false,
@@ -250,9 +268,9 @@ namespace BookLibraryAPIDemo.Migrations
                         },
                         new
                         {
-                            Id = "ed0445a0-2c75-4474-a2ef-a3e458507428",
+                            Id = "85baa468-9b51-49cb-aded-29dc1740ca1e",
                             CreatedBy = "system",
-                            CreatedDate = new DateTime(2025, 3, 21, 20, 47, 44, 596, DateTimeKind.Utc).AddTicks(2192),
+                            CreatedDate = new DateTime(2025, 3, 21, 16, 21, 21, 201, DateTimeKind.Utc).AddTicks(5527),
                             DeletedBy = "",
                             Description = "Books on science and nature",
                             IsDeleted = false,
@@ -316,10 +334,6 @@ namespace BookLibraryAPIDemo.Migrations
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("BookId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
                     b.Property<string>("Caption")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -356,8 +370,6 @@ namespace BookLibraryAPIDemo.Migrations
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("BookId");
 
                     b.ToTable("Reviews");
                 });
@@ -580,11 +592,23 @@ namespace BookLibraryAPIDemo.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("BookLibraryAPIDemo.Domain.Entities.Review", "Review")
+                        .WithMany("Books")
+                        .HasForeignKey("ReviewId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("BookLibraryAPIDemo.Domain.Entities.Review", null)
+                        .WithMany()
+                        .HasForeignKey("ReviewId1");
+
                     b.Navigation("Author");
 
                     b.Navigation("Category");
 
                     b.Navigation("Publisher");
+
+                    b.Navigation("Review");
                 });
 
             modelBuilder.Entity("BookLibraryAPIDemo.Domain.Entities.BookDetail", b =>
@@ -592,17 +616,6 @@ namespace BookLibraryAPIDemo.Migrations
                     b.HasOne("BookLibraryAPIDemo.Domain.Entities.Book", "Book")
                         .WithOne("BookDetail")
                         .HasForeignKey("BookLibraryAPIDemo.Domain.Entities.BookDetail", "BookId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Book");
-                });
-
-            modelBuilder.Entity("BookLibraryAPIDemo.Domain.Entities.Review", b =>
-                {
-                    b.HasOne("BookLibraryAPIDemo.Domain.Entities.Book", "Book")
-                        .WithMany("Reviews")
-                        .HasForeignKey("BookId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -669,8 +682,6 @@ namespace BookLibraryAPIDemo.Migrations
                 {
                     b.Navigation("BookDetail")
                         .IsRequired();
-
-                    b.Navigation("Reviews");
                 });
 
             modelBuilder.Entity("BookLibraryAPIDemo.Domain.Entities.Category", b =>
@@ -679,6 +690,11 @@ namespace BookLibraryAPIDemo.Migrations
                 });
 
             modelBuilder.Entity("BookLibraryAPIDemo.Domain.Entities.Publisher", b =>
+                {
+                    b.Navigation("Books");
+                });
+
+            modelBuilder.Entity("BookLibraryAPIDemo.Domain.Entities.Review", b =>
                 {
                     b.Navigation("Books");
                 });

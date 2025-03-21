@@ -1,8 +1,8 @@
 ﻿namespace BookLibraryAPIDemo.Application.DTO
 {
-    public class CreatePublisherDTO
+    public class PublisherDTO 
     {
-
+        public string Id { get; set; }
         public string PublisherName { get; set; }
         public string Address { get; set; }
         public string City { get; set; }
