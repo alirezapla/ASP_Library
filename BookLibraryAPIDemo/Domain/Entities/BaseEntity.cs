@@ -5,14 +5,17 @@ namespace BookLibraryAPIDemo.Domain.Entities;
 
 public abstract class BaseEntity
 {
+    public BaseEntity()
+    {
+        Id = Guid.NewGuid().ToString();  
+    }
     [Key]
-    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-    public int Id { get; set; }
-
-    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-    public string CreatedBy { get; set; } 
-    public DateTime? ModifiedAt { get; set; } 
-    public string ModifiedBy { get; set; } 
-    
-    public bool SoftDelete { get; set; }
+    public string Id { get; set; }
+    public DateTime CreatedDate { get; set; } = DateTime.UtcNow;
+    public string CreatedBy { get; set; }
+    public DateTime? UpdatedDate { get; set; }
+    public string UpdatedBy { get; set; }
+    public bool IsDeleted { get; set; }
+    public DateTime? DeletedDate { get; set; }
+    public string DeletedBy { get; set; }
 }
