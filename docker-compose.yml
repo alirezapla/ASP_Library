@@ -1,0 +1,63 @@
+version: '3.5'
+
+#services:
+#  postgres:
+#    container_name: postgresql
+#    image: postgres:14.0-alpine
+#    restart: on-failure
+#    ports:
+#      - 5432:5432
+#    volumes:
+#      - ./postgres:/var/lib/postgresql/data
+#    environment:
+#      - POSTGRES_USER=${DB_USER}
+#      - POSTGRES_PASSWORD=${DB_PASSWORD}
+#      - POSTGRES_DB=${DB_NAME}
+#  
+#  pgadmin:
+#    container_name: pgadmin
+#    image: dpage/pgadmin4
+#    environment:
+#      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:-pgadmin4@pgadmin.org}
+#      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD:-admin}
+#      PGADMIN_CONFIG_SERVER_MODE: 'False'
+#    volumes:
+#       - pgadmin:/var/lib/pgadmin
+#
+#    ports:
+#      - "${PGADMIN_PORT:-5050}:80"
+#    restart: unless-stopped
+#
+#
+#volumes:
+#    postgres:
+#    pgadmin:
+
+#https://www.sqlservercentral.com/articles/using-containers-to-avoid-installing-sql-server
+
+services:
+  mssql:
+    container_name: sql2022-default
+    user: root
+    hostname: sql2022
+    image: mcr.microsoft.com/mssql/server:2022-CU14-ubuntu-22.04
+    environment:
+      ACCEPT_EULA: 'Y'
+      MSSQL_SA_PASSWORD: 'Str0ngP@ssw0rd!'
+      MSSQL_DATA_DIR: /var/opt/mssql/data
+      MSSQL_PID: 'Developer'
+      MSSQL_TCP_PORT: 1433
+      MSSQL_USER: 'TEST_USER'
+    ports:       
+      - "1433:1433"
+    networks:
+      - mynet
+    volumes:
+      - ./data:/var/opt/mssql/data
+      - ./log:/var/opt/mssql/log
+      - ./secrets:/var/opt/mssql/secrets
+      - ./backup:/var/opt/mssql/backup
+
+networks:
+  mynet:
+    driver: bridge
