@@ -1,8 +1,22 @@
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using Microsoft.AspNetCore.Mvc.Routing;
 
 namespace BookLibraryAPIDemo.API.Extensions;
 
+public static class MvcOptionsExtensions
+{
+    public static void UseRoutePrefix(this MvcOptions opts, IRouteTemplateProvider routeAttribute)
+    {
+        opts.Conventions.Add(new RoutePrefixConvention(routeAttribute));
+    }
+
+    public static void UseRoutePrefix(this MvcOptions opts, string
+        prefix)
+    {
+        opts.UseRoutePrefix(new RouteAttribute(prefix));
+    }
+}
 public class RoutePrefixConvention : IApplicationModelConvention
 {
     private readonly AttributeRouteModel _routePrefix;
