@@ -1,4 +1,3 @@
-using System.Reflection;
 using BookLibraryAPIDemo.API.Extensions;
 using BookLibraryAPIDemo.Application.Commands.BookLibraryAPICategory;
 using BookLibraryAPIDemo.Application.Interfaces;
@@ -7,6 +6,7 @@ using BookLibraryAPIDemo.Application.Services;
 using BookLibraryAPIDemo.Infrastructure.Context;
 using BookLibraryAPIDemo.Infrastructure.Interfaces;
 using BookLibraryAPIDemo.Infrastructure.Repositories;
+using BookLibraryAPIDemo.MiddleWares;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using NLog;
@@ -17,7 +17,10 @@ var builder = WebApplication.CreateBuilder(args);
 LogManager.Setup().LoadConfigurationFromFile(string.Concat(Directory.GetCurrentDirectory(), "/nlog.config"));
 
 // Add services to the container.
-builder.Services.AddControllers();
+builder.Services.AddControllers(o =>{
+    o.UseRoutePrefix("api");
+});
+builder.Services.AddHttpContextAccessor();
 builder.Services.AddDbContext<BookLibraryContext>(o =>
 {
     o.UseSqlServer(builder.Configuration.GetConnectionString("sqlConnection"),
@@ -98,6 +101,7 @@ app.UseAuthorization();
 
 app.UseSwagger();
 
+app.UseMiddleware<AutomaticDbMigratorMiddleware>();
 
 app.UseSwaggerUI(c =>
 {
