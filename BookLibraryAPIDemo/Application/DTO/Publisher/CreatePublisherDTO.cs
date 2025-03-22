@@ -1,10 +1,12 @@
-﻿namespace BookLibraryAPIDemo.Application.DTO
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace BookLibraryAPIDemo.Application.DTO
 {
     public class CreatePublisherDTO
     {
-        public string PublisherName { get; set; }
-        public string Address { get; set; }
-        public string City { get; set; }
-        public string Country { get; set; }
+        [Required] public string PublisherName { get; set; }
+        [Required] public string Address { get; set; }
+        [Required] public string City { get; set; }
+        [Required] public string Country { get; set; }
     }
 }

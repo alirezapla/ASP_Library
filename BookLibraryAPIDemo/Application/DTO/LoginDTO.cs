@@ -1,9 +1,12 @@
-﻿namespace BookLibraryAPIDemo.Application.DTO
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace BookLibraryAPIDemo.Application.DTO
 {
     public class LoginDTO
     {
-   
-        public string Password { get; set; }
+        [Required] public string Password { get; set; }
+
+        [Required, RegularExpression("^(.+)@(.+)$")]
         public string Email { get; set; }
     }
 }
