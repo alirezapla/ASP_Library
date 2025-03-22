@@ -195,3 +195,4 @@ The project includes a global exception handler middleware (GlobalExceptionHandl
     404 Not Found: Resource not found.
 
  
+## ERD
