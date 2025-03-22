@@ -1,6 +1,6 @@
 namespace BookLibraryAPIDemo.Application.Exceptions;
 
-public class BadRequestException : Exception, IAppException
+public class BadRequestException : Exception
 {
     public BadRequestException() : base("Invalid request data.")
     {
@@ -13,5 +13,4 @@ public class BadRequestException : Exception, IAppException
     public BadRequestException(string message, Exception innerException) : base(message, innerException)
     {
     }
-}
 }

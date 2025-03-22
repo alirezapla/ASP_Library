@@ -8,7 +8,7 @@ namespace BookLibraryAPIDemo.Application.Commands.BookDetails;
 
 public class UpdateBookDetail : IRequest<BookDetailDTO>
 {
-    public UpdateBookDetail BookDetail { get; set; }
+    public UpdateBookDetailDto BookDetail { get; set; }
     public string BookDetailId { get; set; }
 }
 
