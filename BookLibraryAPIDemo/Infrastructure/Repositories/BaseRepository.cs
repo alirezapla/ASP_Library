@@ -1,4 +1,5 @@
 ﻿
+using System.Linq.Expressions;
 using BookLibraryAPIDemo.Application.Exceptions;
 using BookLibraryAPIDemo.Infrastructure.Context;
 using BookLibraryAPIDemo.Infrastructure.Interfaces;
@@ -7,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 namespace BookLibraryAPIDemo.Infrastructure.Repositories
 {
 
-    public class BaseRepository<T> : IBaseRepository<T> where T : class
+    public class BaseRepository<T> : IBaseRepository<T> where T : class, IEntity
     {
         private readonly BookLibraryContext _context;
 
@@ -84,6 +85,15 @@ namespace BookLibraryAPIDemo.Infrastructure.Repositories
             return await _context.Set<T>().FindAsync(id);
         }
 
+        public async Task<T> GetByIdAsync(string id, Expression<Func<T, object>> include)
+        {
+            var query = _context.Set<T>().AsQueryable();
+            
+            query = query.Include(include);
+
+            return await query.FirstOrDefaultAsync(arg => arg.Id == id);
+        }
+        
         public async Task<T> UpdateAsync(T entity)
         {
             try

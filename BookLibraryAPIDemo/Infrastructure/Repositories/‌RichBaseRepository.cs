@@ -17,6 +17,11 @@ public class RichBaseRepository<T> : IBaseRepository<T> where T : class
         _context = context ?? throw new ArgumentNullException(nameof(context));
     }
 
+    public Task<T> GetByIdAsync(string id, Expression<Func<T, object>> include)
+    {
+        throw new NotImplementedException();
+    }
+
     public async Task<T> CreateAsync(T entity)
     {
         if (entity == null) throw new ArgumentNullException(nameof(entity));
