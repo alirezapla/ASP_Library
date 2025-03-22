@@ -25,7 +25,7 @@ public class GlobalExceptionHandlerMiddleware
         {
             await _next(context);
         }
-        catch (Exception ex) when (ex is ApplicationException businessException)
+        catch (Exception ex)
         {
             _logger.LogError(ex, "Business exception has been thrown");
 
@@ -37,17 +37,11 @@ public class GlobalExceptionHandlerMiddleware
                 BookNotFoundException => StatusCodes.Status404NotFound,
                 CategoryNotFoundException => StatusCodes.Status404NotFound,
                 NotFoundException => StatusCodes.Status404NotFound,
+                KeyNotFoundException => StatusCodes.Status404NotFound,
                 RepositoryException => StatusCodes.Status400BadRequest,
                 _ => StatusCodes.Status500InternalServerError
             };
 
-            await WriteResponseAsync(context, ex);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "An unhandled exception has occurred");
-        
-            context.Response.StatusCode = StatusCodes.Status500InternalServerError;
             await WriteResponseAsync(context, ex);
         }
     }

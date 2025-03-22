@@ -1,57 +1,64 @@
-namespace BookLibraryAPIDemo.MiddleWares;
+using Microsoft.AspNetCore.Http;
+using System;
+using System.IO;
+using System.Threading.Tasks;
 
-public class ResponseEnrichmentMiddleware
+namespace BookLibraryAPIDemo.MiddleWares
 {
-    private readonly RequestDelegate _next;
-
-    public ResponseEnrichmentMiddleware(RequestDelegate next)
+    public class ResponseEnrichmentMiddleware
     {
-        _next = next;
-    }
+        private readonly RequestDelegate _next;
 
-    public async Task InvokeAsync(HttpContext context)
-    {
-        // Generate a trace ID (you can use a GUID or any unique identifier)
-        var traceId = Guid.NewGuid().ToString();
-
-        // Add the trace ID to the response headers
-        context.Response.OnStarting(() =>
+        public ResponseEnrichmentMiddleware(RequestDelegate next)
         {
-            context.Response.Headers.Add("X-Trace-Id", traceId);
-            return Task.CompletedTask;
-        });
+            _next = next;
+        }
 
-        // Call the next middleware in the pipeline
-        await _next(context);
-
-        // Modify the response body only for 200 OK responses
-        if (context.Response.StatusCode == StatusCodes.Status200OK)
+        public async Task InvokeAsync(HttpContext context)
         {
+            var traceId = Guid.NewGuid().ToString();
+
+            context.Response.OnStarting(() =>
+            {
+                context.Response.Headers.Add("X-Trace-Id", traceId);
+                return Task.CompletedTask;
+            });
+            if (context.Request.Path.StartsWithSegments("/swagger"))
+            {
+                await _next(context);
+                return;
+            }
+
             var originalBodyStream = context.Response.Body;
-
             using (var newBodyStream = new MemoryStream())
             {
                 context.Response.Body = newBodyStream;
 
-                // Read the original response body
-                newBodyStream.Seek(0, SeekOrigin.Begin);
-                var responseBody = await new StreamReader(newBodyStream).ReadToEndAsync();
-                newBodyStream.Seek(0, SeekOrigin.Begin);
+                await _next(context);
 
-                // Create a new response object with the timestamp and trace ID
-                var enrichedResponse = new
+                if (context.Response.StatusCode == StatusCodes.Status200OK)
                 {
-                    Data = JsonConvert.DeserializeObject(responseBody), // Original response data
-                    Timestamp = DateTime.UtcNow.ToString("o"), // ISO 8601 timestamp
-                    TraceId = traceId
-                };
+                    newBodyStream.Seek(0, SeekOrigin.Begin);
+                    var responseBody = await new StreamReader(newBodyStream).ReadToEndAsync();
+                    newBodyStream.Seek(0, SeekOrigin.Begin);
 
-                // Serialize the enriched response to JSON
-                var jsonResponse = JsonConvert.SerializeObject(enrichedResponse);
+                    var enrichedResponse = new
+                    {
+                        Data = string.IsNullOrEmpty(responseBody)
+                            ? null
+                            : Newtonsoft.Json.JsonConvert.DeserializeObject(responseBody), // Original response data
+                        Timestamp = DateTime.UtcNow.ToString("o"),
+                        TraceId = traceId
+                    };
 
-                // Write the modified response to the original stream
-                context.Response.ContentType = "application/json";
-                await context.Response.WriteAsync(jsonResponse);
+                    var jsonResponse = Newtonsoft.Json.JsonConvert.SerializeObject(enrichedResponse);
+
+                    context.Response.ContentType = "application/json";
+                    await context.Response.WriteAsync(jsonResponse);
+                }
+
+                newBodyStream.Seek(0, SeekOrigin.Begin);
+                await newBodyStream.CopyToAsync(originalBodyStream);
             }
         }
     }

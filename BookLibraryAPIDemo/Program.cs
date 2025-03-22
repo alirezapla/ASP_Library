@@ -80,7 +80,6 @@ var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 var logger = app.Services.GetRequiredService<ILoggerManager>();
-app.ConfigureExceptionHandler(logger);
 
 if (app.Environment.IsProduction())
     app.UseHsts();
@@ -103,6 +102,7 @@ app.UseSwagger();
 
 app.UseMiddleware<AutomaticDbMigratorMiddleware>();
 app.UseMiddleware<GlobalExceptionHandlerMiddleware>();
+app.UseMiddleware<ResponseEnrichmentMiddleware>();
 
 app.UseSwaggerUI(c =>
 {
