@@ -1,7 +1,6 @@
 using AutoMapper;
 using BookLibraryAPIDemo.Application.DTO;
 using BookLibraryAPIDemo.Application.Exceptions;
-using BookLibraryAPIDemo.Application.Queries.Books;
 using BookLibraryAPIDemo.Domain.Entities;
 using BookLibraryAPIDemo.Infrastructure.Interfaces;
 using MediatR;
@@ -10,15 +9,15 @@ namespace BookLibraryAPIDemo.Application.Queries.BookDetails;
 
 public class GetBookDetails : IRequest<BookDetailDTO>
 {
-    public string BookDetailId { get; set; }
+    public string BookId { get; set; }
 }
 
-public class GetBookDetailsByIdHandler : IRequestHandler<GetBookDetails, BookDetailDTO>
+public class GetBookDetailsHandler : IRequestHandler<GetBookDetails, BookDetailDTO>
 {
-    private readonly IBaseRepository<BookDetail> _repository;
+    private readonly IBaseRepository<Book> _repository;
     private readonly IMapper _mapper;
 
-    public GetBookDetailsByIdHandler(IBaseRepository<BookDetail> repository, IMapper mapper)
+    public GetBookDetailsHandler(IBaseRepository<Book> repository, IMapper mapper)
     {
         _repository = repository;
         _mapper = mapper;
@@ -26,12 +25,12 @@ public class GetBookDetailsByIdHandler : IRequestHandler<GetBookDetails, BookDet
 
     public async Task<BookDetailDTO> Handle(GetBookDetails request, CancellationToken cancellationToken)
     {
-        var bookDetail = await _repository.GetByIdAsync(request.BookDetailId);
-        if (bookDetail == null)
+        var book = await _repository.GetByIdAsync(request.BookId,(Book book) => book.BookDetail);
+        if (book == null)
         {
-            throw new BookNotFoundException(request.BookDetailId);
+            throw new BookNotFoundException(request.BookId);
         }
 
-        return _mapper.Map<BookDetailDTO>(bookDetail);
+        return _mapper.Map<BookDetailDTO>(book.BookDetail);
     }
 }
