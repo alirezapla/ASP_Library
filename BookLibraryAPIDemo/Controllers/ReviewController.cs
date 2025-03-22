@@ -27,13 +27,10 @@ public class ReviewController : BaseApiController
     [HttpPost]
     public async Task<IActionResult> CreateReview([FromBody] CreateReviewDTO model)
     {
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+        
         var review = await Mediator.Send(new CreateReview() {Review = model});
         return Created(review.Id, review);
-    }
-
-    [HttpDelete("{id}")]
-    public async Task<IActionResult> DeleteReviewById([FromRoute] string id)
-    {
-        return Ok(await Mediator.Send(new DeleteBookDetail() {BookDetailId = id}));
     }
 }

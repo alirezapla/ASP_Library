@@ -1,5 +1,7 @@
-﻿using BookLibraryAPIDemo.Application.Commands.Books;
+﻿using BookLibraryAPIDemo.Application.Commands.BookDetails;
+using BookLibraryAPIDemo.Application.Commands.Books;
 using BookLibraryAPIDemo.Application.DTO;
+using BookLibraryAPIDemo.Application.Queries.BookDetails;
 using BookLibraryAPIDemo.Application.Queries.Books;
 using BookLibraryAPIDemo.Infrastructure.Repositories;
 using Microsoft.AspNetCore.Authorization;
@@ -14,6 +16,9 @@ namespace BookLibraryAPIDemo.API.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateBookAsync([FromBody] CreateBookDTO model)
         {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
             return Ok(await Mediator.Send(new CreateBook {Book = model}));
         }
 
@@ -41,6 +46,33 @@ namespace BookLibraryAPIDemo.API.Controllers
         public async Task<IActionResult> DeleteBookAsync([FromRoute] string id)
         {
             return Ok(await Mediator.Send(new DeleteBook {BookId = id}));
+        }
+
+
+        [HttpPost("{id}/detail")]
+        public async Task<IActionResult> CreateBookDetailAsync([FromBody] CreateBookDetailDTO model,
+            [FromRoute] string id)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            await Mediator.Send(new CreateBookDetail() {BookDetail = model, BookId = id});
+            return Created(id, "created");
+        }
+
+        [HttpGet("{id}/detail")]
+        public async Task<IActionResult> GetBookDetailsAsync([FromRoute] string id)
+        {
+            return Ok(await Mediator.Send(new GetBookDetails() {BookId = id}));
+        }
+
+
+        [HttpPut("{id}/detail")]
+        public async Task<IActionResult> UpdateBookDetailsAsync([FromRoute] string id,
+            [FromBody] UpdateBookDetailDto model)
+        {
+            using var reader = new StreamReader(Request.Body);
+            return Ok(await Mediator.Send(new UpdateBookDetail() {BookDetail = model, BookId = id}));
         }
     }
 }

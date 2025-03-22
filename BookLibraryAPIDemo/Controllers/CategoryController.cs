@@ -15,6 +15,9 @@ namespace BookLibraryAPIDemo.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateCategoryAsync([FromBody] CreateCategoryDTO model)
         {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+            
             return Ok(await Mediator.Send(new CreateCategory {Category = model}));
         }
 

@@ -14,6 +14,9 @@ namespace BookLibraryAPIDemo.Controllers
         [HttpPost]
         public async Task<IActionResult> CreatePublisherAsync([FromBody] CreatePublisherDTO model)
         {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+            
             return Ok(await Mediator.Send(new CreatePublisher {Publisher = model}));
         }
 
