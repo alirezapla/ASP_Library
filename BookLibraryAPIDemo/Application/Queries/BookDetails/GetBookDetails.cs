@@ -8,12 +8,12 @@ using MediatR;
 
 namespace BookLibraryAPIDemo.Application.Queries.BookDetails;
 
-public class GetBookDetailsById : IRequest<BookDetailDTO>
+public class GetBookDetails : IRequest<BookDetailDTO>
 {
     public string BookDetailId { get; set; }
 }
 
-public class GetBookDetailsByIdHandler : IRequestHandler<GetBookDetailsById, BookDetailDTO>
+public class GetBookDetailsByIdHandler : IRequestHandler<GetBookDetails, BookDetailDTO>
 {
     private readonly IBaseRepository<BookDetail> _repository;
     private readonly IMapper _mapper;
@@ -24,7 +24,7 @@ public class GetBookDetailsByIdHandler : IRequestHandler<GetBookDetailsById, Boo
         _mapper = mapper;
     }
 
-    public async Task<BookDetailDTO> Handle(GetBookDetailsById request, CancellationToken cancellationToken)
+    public async Task<BookDetailDTO> Handle(GetBookDetails request, CancellationToken cancellationToken)
     {
         var bookDetail = await _repository.GetByIdAsync(request.BookDetailId);
         if (bookDetail == null)

@@ -9,15 +9,15 @@ namespace BookLibraryAPIDemo.Application.Commands.BookDetails;
 public class UpdateBookDetail : IRequest<BookDetailDTO>
 {
     public UpdateBookDetailDto BookDetail { get; set; }
-    public string BookDetailId { get; set; }
+    public string BookId { get; set; }
 }
 
 public class UpdateBookDetailHandler : IRequestHandler<UpdateBookDetail, BookDetailDTO>
 {
     private readonly IMapper _mapper;
-    private readonly IBaseRepository<BookDetail> _repository;
+    private readonly IBaseRepository<Book> _repository;
     
-    public UpdateBookDetailHandler(IMapper mapper, IBaseRepository<BookDetail> repository)
+    public UpdateBookDetailHandler(IMapper mapper, IBaseRepository<Book> repository)
     {
         _mapper = mapper;
         _repository = repository;
@@ -25,16 +25,16 @@ public class UpdateBookDetailHandler : IRequestHandler<UpdateBookDetail, BookDet
     
     public async Task<BookDetailDTO> Handle(UpdateBookDetail request, CancellationToken cancellationToken)
     {
-        var existingBookDetail = await _repository.GetByIdAsync(request.BookDetailId);
+        var existingBook = await _repository.GetByIdAsync(request.BookId,(Book book) => book.BookDetail);
 
-        if (existingBookDetail == null)
+        if (existingBook == null)
         {
-            throw new KeyNotFoundException($"Book Detail with id {request.BookDetailId} not found");
+            throw new KeyNotFoundException($"Book with id {request.BookId} not found");
         }
 
-        _mapper.Map(request.BookDetail, existingBookDetail);
-        await _repository.UpdateAsync(existingBookDetail);
-        return _mapper.Map<BookDetailDTO>(existingBookDetail);
+        _mapper.Map(request.BookDetail, existingBook.BookDetail);
+        await _repository.UpdateAsync(existingBook);
+        return _mapper.Map<BookDetailDTO>(existingBook.BookDetail);
 
     }
 }
