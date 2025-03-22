@@ -23,7 +23,7 @@ public class BookDetailController : BaseApiController
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> GetBookDetailsAsync([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
     {
-        return Ok(await Mediator.Send(new GetAllBookDetails()));
+        return Ok(await Mediator.Send(new GetAllBookDetails(){PageNumber = pageNumber,PageSize = pageSize}));
     }
 
     [HttpGet("{id}")]
@@ -33,8 +33,9 @@ public class BookDetailController : BaseApiController
     }
 
     [HttpPut("{id}")]
-    public async Task<IActionResult> UpdateBookDetailsAsync([FromRoute] string id, [FromBody] UpdateBookDetail model)
+    public async Task<IActionResult> UpdateBookDetailsAsync([FromRoute] string id, [FromBody] UpdateBookDetailDto model)
     {
+        using var reader = new StreamReader(Request.Body);
         return Ok(await Mediator.Send(new UpdateBookDetail() {BookDetail = model, BookDetailId = id}));
     }
 
