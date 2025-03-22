@@ -1,26 +1,46 @@
-📚 ASP Library Project
+# 📚 ASP Library Project
 
 This project is a simple library management system built using ASP.NET Core and Entity Framework Core. It provides functionalities to manage books, authors, publishers, categories, and book details.
 
-🚀 Features
 
-    Book Management: Add, edit, delete, and view books.
+## 🚀 Features
 
-    Author Management: Add, edit, delete, and view authors.
 
-    Publisher Management: Add, edit, delete, and view publishers.
-
-    Category Management: Add, edit, delete, and view categories.
-
-    Book Details Management: Add, edit, delete, and view book details.
-
-    Request Validation: Use of Data Annotations for request validation.
-
-    Error Handling: Middleware for handling server errors and invalid requests.
-
-    Database: SQL Server as the database and Entity Framework Core for data management.
-
-🛠️ Technologies Used
+*   **Book Management:**
+    *   Add new books with details like title, ISBN, author, category, publisher, publication date, and description.
+    *   Edit and update existing book information.
+    *   Search for books by title, author, category, or ISBN.
+    *   Display a list of all books or filter by category or availability.
+*   **Author Management:**
+    *   Add new authors with their biography.
+    *   Edit author details.
+    *   List all authors and their associated books.
+*   **Category Management:**
+    *   Create, edit, and delete book categories.
+    *   Assign categories to books.
+*   **Publisher Management:**
+    *   Add new publishers with their contact information.
+    *   Edit publisher details.
+    *   Associate publishers with books.
+*   **User Management:**
+    *   User registration and login.
+    *   Role-based access control (e.g., Admin, Librarian, User).
+    *   Manage user profiles.
+*   **Borrowing and Returning:**
+    *   Users can borrow available books.
+    *   Track borrowing history for each user.
+    *   Automatic due date calculation.
+    *   Process book returns.
+*   **Reviews and Ratings:**
+    *   Users can submit reviews and ratings for books.
+    *   Display average ratings for each book.
+*   **Reporting:** (Optional - Include if implemented)
+    *   Generate reports on popular books, borrowing trends, overdue books, etc.
+*   **Search Functionality:**
+    * Robust search capabilities across all entities.
+    
+    
+## 🛠️ Technologies Used
 
     ASP.NET Core: For building the API.
 
@@ -36,45 +56,54 @@ This project is a simple library management system built using ASP.NET Core and 
 
     Middleware: For global exception handling and request validation.
 
-🚀 Getting Started
+## Getting Started
 
-Follow these steps to set up and run the project locally.
-Prerequisites
+**Restore NuGet packages:**
 
-    .NET 8 SDK
+    dotnet restore
 
-    SQL Server
+**Update the database connection string:**
 
-Installation
+Open the `appsettings.json` file.
+
+Locate the `ConnectionStrings` section.
+
+Modify the `DefaultConnection` value to point to your SQL Server (or other database) instance.  Ensure the database server is running and accessible.
 
 
-    Set Up the Database:
+    "ConnectionStrings": {
+      "DefaultConnection": "Server=your_server;Database=LibraryDB;User Id=your_user_id;Password=your_password;"
+    }
 
-        Update the connection string in appsettings.json to point to your SQL Server instance.
+**Apply database migrations:**
 
-        Run the following commands to apply migrations and create the database:
-        bash
-        Copy
 
-        dotnet ef database update
+    dotnet ef database update
 
-    Run the Application:
+**Build the project:**
 
-        In Visual Studio:
 
-            Open the solution file (ASP_Library.sln).
+    dotnet build
 
-        dotnet run
+**Run the application:**
 
-    Access the API:
+    
+    dotnet run
+
+**Access the application:**
 
         The API will be available at https://localhost:5001 (or http://localhost:5000).
 
         Use Swagger UI to explore and test the API endpoints: https://localhost:5001/swagger.
 
-📂 Project Structure
-Copy
+## Configuration
 
+**appsettings.json:**  The primary configuration file for the application.  You can configure database connection strings, logging settings, and other application-specific parameters in this file.
+
+
+## 📂 Project Structure
+
+```
 ASP_Library/
 ├── Controllers/          # API Controllers
 ├── Domain/               # Domain Models and Entities
@@ -85,9 +114,10 @@ ASP_Library/
 ├── appsettings.json      # Configuration File
 ├── Program.cs            # Main Entry Point
 └── README.md             # Project Documentation
+```
 
-📄 API Endpoints
-Books
+## 📄 API Endpoints
+### Books
 
     GET /api/books - Get all books.
 
@@ -99,7 +129,7 @@ Books
 
     DELETE /api/books/{id} - Delete a book.
 
-Authors
+### Authors
 
     GET /api/authors - Get all authors.
 
@@ -111,7 +141,7 @@ Authors
 
     DELETE /api/authors/{id} - Delete an author.
 
-Publishers
+### Publishers
 
     GET /api/publishers - Get all publishers.
 
@@ -123,7 +153,7 @@ Publishers
 
     DELETE /api/publishers/{id} - Delete a publisher.
 
-Categories
+### Categories
 
     GET /api/categories - Get all categories.
 
@@ -135,7 +165,7 @@ Categories
 
     DELETE /api/categories/{id} - Delete a category.
 
-Book Details
+### Book Details
 
     GET /api/books/{id}/details - Get book details by book ID.
 
@@ -145,7 +175,18 @@ Book Details
 
     DELETE /api/books/{id}/details - Delete book details.
 
-🛠️ Error Handling
+### Reviews
+
+    GET /api/reviews/{id} - Get review by review ID.
+
+    POST /api/reviews/{id} - Add review.
+
+    PUT /api/reviews/{id} - Update review.
+
+    DELETE /api/reviews/{id} - Delete review.
+
+
+## 🛠️ Error Handling
 
 The project includes a global exception handler middleware (GlobalExceptionHandlerMiddleware) to handle errors gracefully. It returns structured error responses for:
 
