@@ -102,6 +102,7 @@ app.UseAuthorization();
 app.UseSwagger();
 
 app.UseMiddleware<AutomaticDbMigratorMiddleware>();
+app.UseMiddleware<GlobalExceptionHandlerMiddleware>();
 
 app.UseSwaggerUI(c =>
 {
