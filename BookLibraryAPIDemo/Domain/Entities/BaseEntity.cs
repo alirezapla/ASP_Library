@@ -1,9 +1,10 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using BookLibraryAPIDemo.Infrastructure.Interfaces;
 
 namespace BookLibraryAPIDemo.Domain.Entities;
 
-public abstract class BaseEntity
+public abstract class BaseEntity : IEntity
 {
     public BaseEntity()
     {
