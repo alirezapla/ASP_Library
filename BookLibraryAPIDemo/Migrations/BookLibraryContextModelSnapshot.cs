@@ -102,9 +102,6 @@ namespace BookLibraryAPIDemo.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
-                    b.Property<double>("Price")
-                        .HasColumnType("float");
-
                     b.Property<string>("PublisherId")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
@@ -126,7 +123,7 @@ namespace BookLibraryAPIDemo.Migrations
 
                     b.HasIndex("PublisherId");
 
-                    b.HasIndex("AuthorId", "PublisherId", "Title")
+                    b.HasIndex("AuthorId", "PublisherId", "Title", "IsDeleted")
                         .IsUnique();
 
                     b.ToTable("Books");
@@ -165,6 +162,9 @@ namespace BookLibraryAPIDemo.Migrations
 
                     b.Property<int>("PageCount")
                         .HasColumnType("int");
+
+                    b.Property<double>("Price")
+                        .HasColumnType("float");
 
                     b.Property<string>("Title")
                         .IsRequired()
@@ -224,7 +224,7 @@ namespace BookLibraryAPIDemo.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Name")
+                    b.HasIndex("Name", "IsDeleted")
                         .IsUnique();
 
                     b.ToTable("Categories");
@@ -232,9 +232,9 @@ namespace BookLibraryAPIDemo.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "05e00d7e-c166-4c45-a58b-7093b4f0f6d0",
+                            Id = "40ef366d-9504-48c2-8304-1fd0da7c28d0",
                             CreatedBy = "system",
-                            CreatedDate = new DateTime(2025, 3, 23, 11, 0, 19, 655, DateTimeKind.Utc).AddTicks(7593),
+                            CreatedDate = new DateTime(2025, 3, 23, 14, 29, 45, 453, DateTimeKind.Utc).AddTicks(5792),
                             DeletedBy = "",
                             Description = "This is about Tech",
                             IsDeleted = false,
@@ -243,9 +243,9 @@ namespace BookLibraryAPIDemo.Migrations
                         },
                         new
                         {
-                            Id = "a882ce77-621f-45a1-9160-73b82e7fe31b",
+                            Id = "d6127060-0250-48f8-914a-72d87b87d667",
                             CreatedBy = "system",
-                            CreatedDate = new DateTime(2025, 3, 23, 11, 0, 19, 655, DateTimeKind.Utc).AddTicks(7610),
+                            CreatedDate = new DateTime(2025, 3, 23, 14, 29, 45, 453, DateTimeKind.Utc).AddTicks(5808),
                             DeletedBy = "",
                             Description = "Books on Finance ",
                             IsDeleted = false,
@@ -254,9 +254,9 @@ namespace BookLibraryAPIDemo.Migrations
                         },
                         new
                         {
-                            Id = "043a11f6-0dd7-40ae-bb80-c85a88507798",
+                            Id = "80851ca8-e0e8-48d2-8723-7b56f84412fb",
                             CreatedBy = "system",
-                            CreatedDate = new DateTime(2025, 3, 23, 11, 0, 19, 655, DateTimeKind.Utc).AddTicks(7623),
+                            CreatedDate = new DateTime(2025, 3, 23, 14, 29, 45, 453, DateTimeKind.Utc).AddTicks(5821),
                             DeletedBy = "",
                             Description = "Books on science and nature",
                             IsDeleted = false,
@@ -312,7 +312,7 @@ namespace BookLibraryAPIDemo.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("PublisherName")
+                    b.HasIndex("PublisherName", "IsDeleted")
                         .IsUnique();
 
                     b.ToTable("Publishers");
