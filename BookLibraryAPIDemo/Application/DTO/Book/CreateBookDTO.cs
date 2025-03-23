@@ -6,7 +6,6 @@ namespace BookLibraryAPIDemo.Application.DTO
     {
         public string Title { get; set; }
         [Required] public string AuthorId { get; set; }
-        [Required] public double Price { get; set; }
         [Required] public string CategoryId { get; set; }
         [Required] public string PublisherId { get; set; }
     }
