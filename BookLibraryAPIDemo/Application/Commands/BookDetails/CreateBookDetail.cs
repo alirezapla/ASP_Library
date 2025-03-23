@@ -38,7 +38,6 @@ public class CreateBookDetailHandler : IRequestHandler<CreateBookDetail, BookDet
         if (existingBook.BookDetail != null)
         {
             throw new BadRequestException($"Book with id {request.BookId} already has detail");
-            ;
         }
         var bookDetail = _mapper.Map<BookDetail>(request.BookDetail);
         bookDetail.BookId = request.BookId;
