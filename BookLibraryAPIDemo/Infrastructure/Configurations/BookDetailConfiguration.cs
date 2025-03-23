@@ -4,11 +4,13 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace BookLibraryAPIDemo.Infrastructure.Configurations;
 
-public class BookDetailConfiguration: IEntityTypeConfiguration<BookDetail>
+public class BookDetailConfiguration : IEntityTypeConfiguration<BookDetail>
 {
     public void Configure(EntityTypeBuilder<BookDetail> entity)
     {
         entity.HasKey(b => b.Id);
+        entity.Property(b => b.Price).IsRequired();
+
         entity.Property(bd => bd.Description)
             .IsRequired()
             .HasMaxLength(1000);

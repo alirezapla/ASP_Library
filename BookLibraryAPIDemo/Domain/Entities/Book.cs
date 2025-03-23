@@ -5,7 +5,6 @@
         public string AuthorId { get; set; }
         public string Title { get; set; }
         public Author Author { get; set; }
-        public double Price { get; set; }
         public string CategoryId { get; set; }
         public Category Category { get; set; }
         public string PublisherId { get; set; }
