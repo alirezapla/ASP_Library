@@ -5,14 +5,11 @@ using BookLibraryAPIDemo.Application.DTO;
 using BookLibraryAPIDemo.Application.Queries.BookDetails;
 using BookLibraryAPIDemo.Application.Queries.Books;
 using BookLibraryAPIDemo.Application.Queries.Reviews;
-using BookLibraryAPIDemo.Infrastructure.Filters;
 using BookLibraryAPIDemo.Infrastructure.Repositories;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace BookLibraryAPIDemo.API.Controllers
+namespace BookLibraryAPIDemo.Controllers
 {
-    // [Authorize]
     [Route("books")]
     public class BookController : BaseApiController
     {

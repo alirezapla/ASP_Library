@@ -2,7 +2,7 @@
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
-namespace BookLibraryAPIDemo.API.Controllers
+namespace BookLibraryAPIDemo.Controllers
 {
     // [Authorize]
     [ServiceFilter(typeof(LogActionFilter))]

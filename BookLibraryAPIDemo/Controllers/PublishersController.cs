@@ -1,5 +1,4 @@
-﻿using BookLibraryAPIDemo.API.Controllers;
-using BookLibraryAPIDemo.Application.Commands.Publishers;
+﻿using BookLibraryAPIDemo.Application.Commands.Publishers;
 using BookLibraryAPIDemo.Application.DTO;
 using BookLibraryAPIDemo.Application.Queries.Publishers;
 using BookLibraryAPIDemo.Infrastructure.Repositories;
@@ -7,7 +6,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace BookLibraryAPIDemo.Controllers
 {
-    // [Authorize]
     [Route("publishers")]
     public class PublishersController : BaseApiController
     {
@@ -16,14 +14,15 @@ namespace BookLibraryAPIDemo.Controllers
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
-            
+
             return Ok(await Mediator.Send(new CreatePublisher {Publisher = model}));
         }
 
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PagedResult<PublisherDTO>))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> GetPublishersAsync([FromQuery] int pageNumber, [FromQuery] int pageSize)
+        public async Task<IActionResult> GetPublishersAsync([FromQuery] int pageNumber = 1,
+            [FromQuery] int pageSize = 10)
         {
             return Ok(await Mediator.Send(new GetAllPublisher() {PageNumber = pageNumber, PageSize = pageSize}));
         }

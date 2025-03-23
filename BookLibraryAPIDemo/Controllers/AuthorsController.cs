@@ -1,5 +1,4 @@
-﻿using BookLibraryAPIDemo.API.Controllers;
-using BookLibraryAPIDemo.Application.Commands.Authors;
+﻿using BookLibraryAPIDemo.Application.Commands.Authors;
 using BookLibraryAPIDemo.Application.DTO;
 using BookLibraryAPIDemo.Application.Queries.Authors;
 using BookLibraryAPIDemo.Infrastructure.Repositories;
@@ -7,7 +6,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace BookLibraryAPIDemo.Controllers
 {
-    //[Authorize]
     [Route("authors")]
     public class AuthorsController : BaseApiController
     {
@@ -23,7 +21,7 @@ namespace BookLibraryAPIDemo.Controllers
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PagedResult<AuthorDTO>))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> GetAuthorsAsync([FromQuery] int pageNumber, [FromQuery] int pageSize)
+        public async Task<IActionResult> GetAuthorsAsync([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
         {
             return Ok(await Mediator.Send(new GetAllAuthors() {PageNumber = pageNumber, PageSize = pageSize}));
         }

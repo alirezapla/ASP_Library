@@ -1,5 +1,4 @@
-﻿using BookLibraryAPIDemo.API.Controllers;
-using BookLibraryAPIDemo.Application.Commands.BookLibraryAPICategory;
+﻿using BookLibraryAPIDemo.Application.Commands.BookLibraryAPICategory;
 using BookLibraryAPIDemo.Application.Commands.Categorys;
 using BookLibraryAPIDemo.Application.DTO;
 using BookLibraryAPIDemo.Application.Queries.BookLibraryAPICategory;
@@ -8,7 +7,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace BookLibraryAPIDemo.Controllers
 {
-    // [Authorize]
     [Route("categories")]
     public class CategoryController : BaseApiController
     {
