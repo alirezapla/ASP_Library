@@ -1,4 +1,6 @@
-﻿using BookLibraryAPIDemo.Domain.Entities;
+﻿using System.Reflection;
+using BookLibraryAPIDemo.Domain.Entities;
+using BookLibraryAPIDemo.Infrastructure.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -26,6 +28,15 @@ namespace BookLibraryAPIDemo.Infrastructure.Context
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
+            foreach (var entityType in builder.Model.GetEntityTypes())
+            {
+                if (!typeof(IEntity).IsAssignableFrom(entityType.ClrType)) continue;
+                var method = typeof(BookLibraryContext)
+                    .GetMethod(nameof(SetSoftDeleteFilter), BindingFlags.NonPublic | BindingFlags.Static)
+                    ?.MakeGenericMethod(entityType.ClrType);
+
+                method?.Invoke(null, new object[] {builder});
+            }
 
             builder.ApplyConfigurationsFromAssembly(typeof(BookLibraryContext).Assembly);
         }
@@ -40,6 +51,12 @@ namespace BookLibraryAPIDemo.Infrastructure.Context
         {
             UpdateAuditFields();
             return await base.SaveChangesAsync(cancellationToken);
+        }
+
+        private static void SetSoftDeleteFilter<TEntity>(ModelBuilder modelBuilder)
+            where TEntity : class, IEntity
+        {
+            modelBuilder.Entity<TEntity>().HasQueryFilter(e => !e.IsDeleted);
         }
 
         private void UpdateAuditFields()
@@ -66,14 +83,16 @@ namespace BookLibraryAPIDemo.Infrastructure.Context
                         entity.DeletedBy = "";
                         break;
                     case EntityState.Modified:
+                        if (entity.IsDeleted)
+                        {
+                            entity.IsDeleted = true;
+                            entity.DeletedDate = DateTime.UtcNow;
+                            entity.DeletedBy = currentUser;
+                            break;
+                        }
+
                         entity.UpdatedDate = DateTime.UtcNow;
                         entity.UpdatedBy = currentUser;
-                        break;
-                    case EntityState.Deleted:
-                        entry.State = EntityState.Modified;
-                        entity.IsDeleted = true;
-                        entity.DeletedDate = DateTime.UtcNow;
-                        entity.DeletedBy = currentUser;
                         break;
                 }
             }
