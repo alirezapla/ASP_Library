@@ -1,13 +1,12 @@
-﻿
-using System.Linq.Expressions;
+﻿using System.Linq.Expressions;
 using BookLibraryAPIDemo.Application.Exceptions;
 using BookLibraryAPIDemo.Infrastructure.Context;
 using BookLibraryAPIDemo.Infrastructure.Interfaces;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 
 namespace BookLibraryAPIDemo.Infrastructure.Repositories
 {
-
     public class BaseRepository<T> : IBaseRepository<T> where T : class, IEntity
     {
         private readonly BookLibraryContext _context;
@@ -25,11 +24,20 @@ namespace BookLibraryAPIDemo.Infrastructure.Repositories
                 await _context.SaveChangesAsync();
                 return entity;
             }
+
             catch (Exception ex)
             {
+                if (ex.InnerException is SqlException sqlEx && (sqlEx.Number == 2601 || sqlEx.Number == 2627))
+                {
+                    var duplicateValue = ExtractDuplicateValueFromErrorMessage(sqlEx.Message);
+                    throw new DuplicateKeyException(
+                        $"A duplicate key violation occurred. The value '{duplicateValue}' already exists.", ex);
+                }
+
                 throw new RepositoryException("An error occurred while creating the entity.", ex);
             }
         }
+
 
         public async Task<T> DeleteAsync(T entity)
         {
@@ -44,14 +52,15 @@ namespace BookLibraryAPIDemo.Infrastructure.Repositories
                 throw new RepositoryException("An error occurred while deleting the entity.", ex);
             }
         }
-        
+
         public async Task<List<T>> GetAllAsync()
         {
             return await _context.Set<T>().AsNoTracking().ToListAsync();
         }
-        
 
-        public async Task<(List<T> Items, int TotalCount)> GetAllAsync(int pageNumber = 1, int pageSize = 10, ISpecification<T> spec = null)
+
+        public async Task<(List<T> Items, int TotalCount)> GetAllAsync(int pageNumber = 1, int pageSize = 10,
+            ISpecification<T> spec = null)
         {
             var query = _context.Set<T>().AsQueryable();
 
@@ -88,12 +97,12 @@ namespace BookLibraryAPIDemo.Infrastructure.Repositories
         public async Task<T> GetByIdAsync(string id, Expression<Func<T, object>> include)
         {
             var query = _context.Set<T>().AsQueryable();
-            
+
             query = query.Include(include);
 
             return await query.FirstOrDefaultAsync(arg => arg.Id == id);
         }
-        
+
         public async Task<T> UpdateAsync(T entity)
         {
             try
@@ -107,7 +116,12 @@ namespace BookLibraryAPIDemo.Infrastructure.Repositories
                 throw new RepositoryException("An error occurred while updating the entity.", ex);
             }
         }
+        
+        private static string ExtractDuplicateValueFromErrorMessage(string errorMessage)
+        {
+            var startIndex = errorMessage.LastIndexOf('(') + 1;
+            var endIndex = errorMessage.LastIndexOf(')');
+            return errorMessage.Substring(startIndex, endIndex - startIndex);
+        }
     }
-
-
 }
