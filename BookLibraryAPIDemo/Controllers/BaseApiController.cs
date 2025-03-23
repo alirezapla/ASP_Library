@@ -1,12 +1,13 @@
-﻿using MediatR;
+﻿using BookLibraryAPIDemo.Infrastructure.Filters;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BookLibraryAPIDemo.API.Controllers
 {
-    public class BaseApiController: ControllerBase
+    // [Authorize]
+    [ServiceFilter(typeof(LogActionFilter))]
+    public class BaseApiController : ControllerBase
     {
         protected IMediator Mediator => HttpContext.RequestServices.GetRequiredService<IMediator>();
-
-
     }
 }
