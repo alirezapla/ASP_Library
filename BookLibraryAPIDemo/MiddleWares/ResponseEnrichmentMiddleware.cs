@@ -16,11 +16,9 @@ namespace BookLibraryAPIDemo.MiddleWares
 
         public async Task InvokeAsync(HttpContext context)
         {
-            var traceId = Guid.NewGuid().ToString();
 
             context.Response.OnStarting(() =>
             {
-                context.Response.Headers.Add("X-Trace-Id", traceId);
                 return Task.CompletedTask;
             });
             if (context.Request.Path.StartsWithSegments("/swagger"))
@@ -38,6 +36,7 @@ namespace BookLibraryAPIDemo.MiddleWares
 
                 if (context.Response.StatusCode == StatusCodes.Status200OK)
                 {
+                    var traceId = context.Response.Headers["X-Trace-Id"].ToString();
                     newBodyStream.Seek(0, SeekOrigin.Begin);
                     var responseBody = await new StreamReader(newBodyStream).ReadToEndAsync();
                     newBodyStream.Seek(0, SeekOrigin.Begin);
@@ -46,7 +45,7 @@ namespace BookLibraryAPIDemo.MiddleWares
                     {
                         Data = string.IsNullOrEmpty(responseBody)
                             ? null
-                            : Newtonsoft.Json.JsonConvert.DeserializeObject(responseBody), // Original response data
+                            : Newtonsoft.Json.JsonConvert.DeserializeObject(responseBody), 
                         Timestamp = DateTime.UtcNow.ToString("o"),
                         TraceId = traceId
                     };
