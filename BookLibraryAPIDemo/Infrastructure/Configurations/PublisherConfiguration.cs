@@ -10,6 +10,8 @@ namespace BookLibraryAPIDemo.Infrastructure.Configurations
         {
             entity.HasKey(p => p.Id);
             entity.Property(p => p.PublisherName).IsRequired();
+            entity.HasIndex(p => p.PublisherName)
+                .IsUnique();
             entity.HasMany(p => p.Books)
                 .WithOne(b => b.Publisher)
                 .HasForeignKey(b => b.PublisherId);

@@ -11,6 +11,8 @@ namespace BookLibraryAPIDemo.Infrastructure.Configurations
         {
             entity.HasKey(c => c.Id);
             entity.Property(c => c.Name).IsRequired();
+            entity.HasIndex(e => e.Name)
+                .IsUnique();
             entity.HasData(
                 new Category
                 {
