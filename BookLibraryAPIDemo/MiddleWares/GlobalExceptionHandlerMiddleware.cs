@@ -39,6 +39,7 @@ public class GlobalExceptionHandlerMiddleware
                 NotFoundException => StatusCodes.Status404NotFound,
                 KeyNotFoundException => StatusCodes.Status404NotFound,
                 RepositoryException => StatusCodes.Status400BadRequest,
+                DuplicateKeyException => StatusCodes.Status400BadRequest,
                 _ => StatusCodes.Status500InternalServerError
             };
 
