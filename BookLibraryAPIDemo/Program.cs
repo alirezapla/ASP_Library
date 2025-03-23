@@ -4,9 +4,11 @@ using BookLibraryAPIDemo.Application.Interfaces;
 using BookLibraryAPIDemo.Application.Mapping;
 using BookLibraryAPIDemo.Application.Services;
 using BookLibraryAPIDemo.Infrastructure.Context;
+using BookLibraryAPIDemo.Infrastructure.Filters;
 using BookLibraryAPIDemo.Infrastructure.Interfaces;
 using BookLibraryAPIDemo.Infrastructure.Repositories;
 using BookLibraryAPIDemo.MiddleWares;
+using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using NLog;
@@ -17,19 +19,21 @@ var builder = WebApplication.CreateBuilder(args);
 LogManager.Setup().LoadConfigurationFromFile(string.Concat(Directory.GetCurrentDirectory(), "/nlog.config"));
 
 // Add services to the container.
-builder.Services.AddControllers(o =>{
-    o.UseRoutePrefix("api");
-});
+builder.Services.AddControllers(o => { o.UseRoutePrefix("api"); });
 builder.Services.AddHttpContextAccessor();
+builder.Services.AddSingleton<ILoggerManager, LoggerManager>();
+builder.Services.AddScoped<LogActionFilter>();
+
 builder.Services.AddDbContext<BookLibraryContext>(o =>
 {
     o.UseSqlServer(builder.Configuration.GetConnectionString("sqlConnection"),
         b => b.MigrationsAssembly("BookLibraryAPIDemo"));
 });
+
 builder.Services.AddScoped(typeof(IBaseRepository<>), typeof(BaseRepository<>));
 builder.Services.AddMediatR(m => m.RegisterServicesFromAssemblyContaining(typeof(CreateCategory)));
 builder.Services.AddAutoMapper(typeof(MappingProfile).Assembly);
-builder.Services.AddSingleton<ILoggerManager, LoggerManager>();
+
 builder.Services.ConfigureCors(builder.Configuration);
 builder.Services.ConfigureIdentity();
 builder.Services.ConfigureJWT(builder.Configuration);
@@ -44,7 +48,7 @@ builder.Services.AddOpenApiDocument();
 // Add Swagger services
 builder.Services.AddSwaggerGen(c =>
 {
-    c.SwaggerDoc("v1", new OpenApiInfo() { Title = "You api title", Version = "v1" });
+    c.SwaggerDoc("v1", new OpenApiInfo() {Title = "You api title", Version = "v1"});
     c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         Description = @"JWT Authorization header using the Bearer scheme. \r\n\r\n 
@@ -69,7 +73,6 @@ builder.Services.AddSwaggerGen(c =>
                 Scheme = "oauth2",
                 Name = "Bearer",
                 In = ParameterLocation.Header,
-
             },
             new List<string>()
         }
@@ -101,13 +104,11 @@ app.UseAuthorization();
 app.UseSwagger();
 
 app.UseMiddleware<AutomaticDbMigratorMiddleware>();
-app.UseMiddleware<GlobalExceptionHandlerMiddleware>();
+app.UseMiddleware<TraceIdMiddleware>();
 app.UseMiddleware<ResponseEnrichmentMiddleware>();
+app.UseMiddleware<GlobalExceptionHandlerMiddleware>();
 
-app.UseSwaggerUI(c =>
-{
-    c.SwaggerEndpoint("/swagger/v1/swagger.json", "Book Library Demon API");
-});
+app.UseSwaggerUI(c => { c.SwaggerEndpoint("/swagger/v1/swagger.json", "Book Library Demon API"); });
 
 app.MapControllers();
 
