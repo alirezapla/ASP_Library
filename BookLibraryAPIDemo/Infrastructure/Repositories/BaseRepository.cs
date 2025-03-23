@@ -53,16 +53,31 @@ namespace BookLibraryAPIDemo.Infrastructure.Repositories
             }
         }
 
+        public async Task<T> SoftDeleteAsync(T entity)
+        {
+            try
+            {
+                entity.IsDeleted = true;
+                _context.Set<T>().Update(entity);
+                await _context.SaveChangesAsync();
+                return entity;
+            }
+            catch (Exception ex)
+            {
+                throw new RepositoryException("An error occurred while deleting the entity.", ex);
+            }
+        }
+
         public async Task<List<T>> GetAllAsync()
         {
-            return await _context.Set<T>().AsNoTracking().ToListAsync();
+            return await _context.Set<T>().AsNoTracking().Where(e=> e.IsDeleted == false).ToListAsync();
         }
 
 
         public async Task<(List<T> Items, int TotalCount)> GetAllAsync(int pageNumber = 1, int pageSize = 10,
             ISpecification<T> spec = null)
         {
-            var query = _context.Set<T>().AsQueryable();
+            var query = _context.Set<T>().Where(e=> e.IsDeleted == false).AsQueryable();
 
             if (spec != null)
             {
