@@ -13,7 +13,7 @@ namespace BookLibraryAPIDemo.Infrastructure.Configurations
             entity.Property(b => b.AuthorId).IsRequired();
             entity.Property(b => b.Price).IsRequired();
             entity.Property(b => b.PublisherId).IsRequired();
-            entity.HasIndex(b => new {b.AuthorId, b.PublisherId, b.Title})
+            entity.HasIndex(b => new {b.AuthorId, b.PublisherId, b.Title,b.IsDeleted})
                 .IsUnique();
             entity.HasOne(b => b.Category)
                 .WithMany(c => c.Books)

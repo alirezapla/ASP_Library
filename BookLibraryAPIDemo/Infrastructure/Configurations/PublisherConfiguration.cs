@@ -10,7 +10,7 @@ namespace BookLibraryAPIDemo.Infrastructure.Configurations
         {
             entity.HasKey(p => p.Id);
             entity.Property(p => p.PublisherName).IsRequired();
-            entity.HasIndex(p => p.PublisherName)
+            entity.HasIndex(p => new {p.PublisherName, p.IsDeleted})
                 .IsUnique();
             entity.HasMany(p => p.Books)
                 .WithOne(b => b.Publisher)
