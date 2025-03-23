@@ -4,11 +4,12 @@ using BookLibraryAPIDemo.Domain.Entities;
 using BookLibraryAPIDemo.Infrastructure.Interfaces;
 using MediatR;
 
-namespace BookLibraryAPIDemo.Application.Commands.BookDetails;
+namespace BookLibraryAPIDemo.Application.Commands.Reviews;
 
 public class DeleteReview : IRequest<string>
 {
     public string ReviewId { get; set; }
+    public string BookId { get; set; }
 }
 
 public class DeleteReviewHandler : IRequestHandler<DeleteReview, string>

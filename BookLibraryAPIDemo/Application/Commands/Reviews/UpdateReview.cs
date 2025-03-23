@@ -4,9 +4,9 @@ using BookLibraryAPIDemo.Domain.Entities;
 using BookLibraryAPIDemo.Infrastructure.Interfaces;
 using MediatR;
 
-namespace BookLibraryAPIDemo.Application.Commands.BookDetails;
+namespace BookLibraryAPIDemo.Application.Commands.Reviews;
 
-public class UpdateReview : IRequest<ReviewDTO>
+public abstract class UpdateReview : IRequest<ReviewDTO>
 {
     public UpdateReviewDTO Review { get; set; }
     public string Id { get; set; }
