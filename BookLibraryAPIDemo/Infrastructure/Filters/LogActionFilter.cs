@@ -1,3 +1,4 @@
+using System.Globalization;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc;
 
@@ -15,13 +16,19 @@ public class LogActionFilter : IActionFilter
     public void OnActionExecuting(ActionExecutingContext context)
     {
         var traceId = context.HttpContext.Response.Headers["X-Trace-Id"];
-        _logger.LogInformation($"Starting execution of {context.ActionDescriptor.DisplayName} with Trace ID: {traceId} at {DateTime.UtcNow}");
+        _logger.LogInformation(
+            $"Starting execution of {context.ActionDescriptor.DisplayName}" +
+            $" with Trace ID: {traceId} " +
+            $"at {DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss.fff", CultureInfo.InvariantCulture)}");
     }
 
     public void OnActionExecuted(ActionExecutedContext context)
     {
         var traceId = context.HttpContext.Response.Headers["X-Trace-Id"];
         var statusCode = context.Result is ObjectResult result ? result.StatusCode : null;
-        _logger.LogInformation($"Finished execution of {context.ActionDescriptor.DisplayName} with Trace ID: {traceId} and with Status Code: {statusCode} at {DateTime.UtcNow}");
+        _logger.LogInformation(
+            $"Finished execution of {context.ActionDescriptor.DisplayName} " +
+            $"with Trace ID: {traceId} and with Status Code: {statusCode} " +
+            $"at {DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss.fff", CultureInfo.InvariantCulture)}");
     }
 }
