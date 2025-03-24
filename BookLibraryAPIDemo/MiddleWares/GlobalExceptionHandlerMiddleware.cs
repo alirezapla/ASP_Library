@@ -50,11 +50,14 @@ public class GlobalExceptionHandlerMiddleware
     private static async Task WriteResponseAsync(HttpContext context, Exception ex)
     {
         context.Response.ContentType = "application/json";
-
+        var traceId = context.Response.Headers["X-Trace-Id"].ToString();
         var response = new
         {
             Error = ex.Message.Replace(Environment.NewLine, " - "),
-            StackTrace = context.Response.StatusCode == StatusCodes.Status500InternalServerError ? ex.StackTrace : null
+            StackTrace = context.Response.StatusCode == StatusCodes.Status500InternalServerError ? ex.StackTrace : null,
+            TraceId = traceId,
+            Timestamp = DateTime.UtcNow.ToString("o"),
+
         };
 
         await context.Response.WriteAsJsonAsync(response);

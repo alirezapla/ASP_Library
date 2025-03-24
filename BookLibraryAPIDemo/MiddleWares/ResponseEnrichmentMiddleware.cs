@@ -1,8 +1,3 @@
-using Microsoft.AspNetCore.Http;
-using System;
-using System.IO;
-using System.Threading.Tasks;
-
 namespace BookLibraryAPIDemo.MiddleWares
 {
     public class ResponseEnrichmentMiddleware
@@ -16,11 +11,7 @@ namespace BookLibraryAPIDemo.MiddleWares
 
         public async Task InvokeAsync(HttpContext context)
         {
-
-            context.Response.OnStarting(() =>
-            {
-                return Task.CompletedTask;
-            });
+            context.Response.OnStarting(() => { return Task.CompletedTask; });
             if (context.Request.Path.StartsWithSegments("/swagger"))
             {
                 await _next(context);
@@ -45,7 +36,7 @@ namespace BookLibraryAPIDemo.MiddleWares
                     {
                         Data = string.IsNullOrEmpty(responseBody)
                             ? null
-                            : Newtonsoft.Json.JsonConvert.DeserializeObject(responseBody), 
+                            : Newtonsoft.Json.JsonConvert.DeserializeObject(responseBody),
                         Timestamp = DateTime.UtcNow.ToString("o"),
                         TraceId = traceId
                     };
