@@ -30,7 +30,7 @@ public class CreateBookDetailHandler : IRequestHandler<CreateBookDetail, BookDet
     {
         var existingBook = await _bookRepository.GetByIdAsync(request.BookId,(Book book) => book.BookDetail);
 
-        if (existingBook == null)
+        if (existingBook == null || existingBook.IsDeleted)
         {
             throw new KeyNotFoundException($"Book with id {request.BookId} not found");
         }
