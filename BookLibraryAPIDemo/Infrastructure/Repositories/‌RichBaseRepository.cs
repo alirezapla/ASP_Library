@@ -69,7 +69,12 @@ public class RichBaseRepository<T> : IBaseRepository<T> where T : class
             throw new RepositoryException("An error occurred while deleting the entity.", ex);
         }
     }
-    
+
+    public Task<T> SoftDeleteAsync(T entity)
+    {
+        throw new NotImplementedException();
+    }
+
     public async Task<(List<T> Items, int TotalCount)> GetAllAsync(int pageNumber, int pageSize, ISpecification<T> spec = null)
     {
         var query = _context.Set<T>().AsQueryable();

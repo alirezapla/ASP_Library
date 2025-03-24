@@ -17,7 +17,8 @@ namespace BookLibraryAPIDemo.Infrastructure.Repositories
             book => book.Author,
             book => book.Category,
             book => book.Publisher,
-            book => book.Reviews
+            book => book.Reviews,
+            book => book.BookDetail
         };
         }
     }

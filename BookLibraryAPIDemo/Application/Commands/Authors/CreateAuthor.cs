@@ -10,25 +10,24 @@ namespace BookLibraryAPIDemo.Application.Commands.Authors
 
     {
         public CreateAuthorDTO Author { get; set; }
+    }
 
+    public class CreateAuthorHandler : IRequestHandler<CreateAuthor, AuthorDTO>
+    {
+        private readonly IBaseRepository<Author> _repository;
+        private readonly IMapper _mapper;
 
-        public class CreateAuthorHandler : IRequestHandler<CreateAuthor, AuthorDTO>
+        public CreateAuthorHandler(IBaseRepository<Author> repository, IMapper mapper)
         {
-            private readonly IBaseRepository<Author> _repository;
-            private readonly IMapper _mapper;
+            _repository = repository;
+            _mapper = mapper;
+        }
 
-            public CreateAuthorHandler(IBaseRepository<Author> repository, IMapper mapper)
-            {
-                _repository = repository;
-                _mapper = mapper;
-            }
-
-            public async Task<AuthorDTO> Handle(CreateAuthor request, CancellationToken cancellationToken)
-            {
-                var author = _mapper.Map<Author>(request.Author);
-                await _repository.CreateAsync(author);
-                return _mapper.Map<AuthorDTO>(author);
-            }
+        public async Task<AuthorDTO> Handle(CreateAuthor request, CancellationToken cancellationToken)
+        {
+            var author = _mapper.Map<Author>(request.Author);
+            await _repository.CreateAsync(author);
+            return _mapper.Map<AuthorDTO>(author);
         }
     }
 }

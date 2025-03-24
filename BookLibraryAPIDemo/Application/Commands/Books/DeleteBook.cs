@@ -1,18 +1,18 @@
-﻿using BookLibraryAPIDemo.Application.Exceptions;
+﻿using BookLibraryAPIDemo.Application.DTO;
+using BookLibraryAPIDemo.Application.Exceptions;
 using BookLibraryAPIDemo.Domain.Entities;
 using BookLibraryAPIDemo.Infrastructure.Interfaces;
 using MediatR;
 
 namespace BookLibraryAPIDemo.Application.Commands.Books
 {
-    public class DeleteBook : IRequest<string>
+    public class DeleteBook : IRequest<DeleteDTO>
     {
         public string BookId { get; set; }
 
 
-        public class DeleteBookHandler : IRequestHandler<DeleteBook, string>
+        public class DeleteBookHandler : IRequestHandler<DeleteBook, DeleteDTO>
         {
-
             private readonly IBaseRepository<Book> _repository;
 
             public DeleteBookHandler(IBaseRepository<Book> repository)
@@ -20,18 +20,21 @@ namespace BookLibraryAPIDemo.Application.Commands.Books
                 _repository = repository;
             }
 
-            public async Task<string> Handle(DeleteBook request, CancellationToken cancellationToken)
+            public async Task<DeleteDTO> Handle(DeleteBook request, CancellationToken cancellationToken)
             {
                 var book = await _repository.GetByIdAsync(request.BookId);
-                if (book == null) { throw new BookNotFoundException(request.BookId); }
-                await _repository.DeleteAsync(book);
+                if (book == null || book.IsDeleted)
+                {
+                    throw new BookNotFoundException(request.BookId);
+                }
 
-                return $"Book with Id {request.BookId} has been deleted";
+                await _repository.SoftDeleteAsync(book);
 
+                return new DeleteDTO()
+                {
+                    Message = $"Book with Id {request.BookId} has been deleted"
+                };
             }
         }
     }
-
-
-
 }

@@ -80,6 +80,20 @@ Modify the `DefaultConnection` value to point to your SQL Server (or other datab
 
     dotnet ef database update
 
+manual script for migration:
+```sql
+CREATE UNIQUE INDEX IX_Books_Author_Title_Publisher
+    ON Books (AuthorId,Title,PublisherId)
+    WHERE IsDeleted = 0;
+
+CREATE UNIQUE INDEX IX_PublisherName
+    ON Publishers (PublisherName)
+    WHERE IsDeleted = 0;
+
+CREATE UNIQUE INDEX IX_CategoryName
+    ON Categories (Name)
+    WHERE IsDeleted = 0;
+```
 **Build the project:**
 
 

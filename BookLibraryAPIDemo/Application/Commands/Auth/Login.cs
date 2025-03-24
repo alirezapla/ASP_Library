@@ -7,23 +7,23 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 
-namespace BookLibraryAPIDemo.Application.Commands.BookLibraryAPIAuth
+namespace BookLibraryAPIDemo.Application.Commands.Auth
 {
     public class Login : IRequest<object>
     {
-        public required LoginDTO LoginDTO { get; set; }
+        public LoginDTO LoginDTO { get; set; }
 
 
         public class LoginHandler : IRequestHandler<Login, object>
         {
-
             private IdentityUser _user;
             private readonly UserManager<IdentityUser> _userManager;
             private readonly ILoggerManager _logger;
             private readonly IConfiguration _configuration;
 
 
-            public LoginHandler(UserManager<IdentityUser> userManager, ILoggerManager logger, IConfiguration configuration)
+            public LoginHandler(UserManager<IdentityUser> userManager, ILoggerManager logger,
+                IConfiguration configuration)
             {
                 _userManager = userManager;
                 _logger = logger;
@@ -43,8 +43,9 @@ namespace BookLibraryAPIDemo.Application.Commands.BookLibraryAPIAuth
                 if (_user == null || !(await _userManager.CheckPasswordAsync(_user, request.LoginDTO.Password)))
                 {
                     _logger.LogWarn($"{nameof(Login)}: Login failed. Wrong email or password");
-                    return new { Message = "Login failed. Wrong email or password" };
+                    return new {Message = "Login failed. Wrong email or password"};
                 }
+
                 var token = await CreateToken();
                 return new
                 {
@@ -54,8 +55,6 @@ namespace BookLibraryAPIDemo.Application.Commands.BookLibraryAPIAuth
                     Token = token
                 };
             }
-
-
 
 
             /// <summary>
@@ -70,6 +69,7 @@ namespace BookLibraryAPIDemo.Application.Commands.BookLibraryAPIAuth
 
                 return new JwtSecurityTokenHandler().WriteToken(tokenOptions);
             }
+
             private SigningCredentials GetSigningCredentials()
             {
                 var jwtSettings = _configuration.GetSection("JwtSettings");
@@ -78,15 +78,15 @@ namespace BookLibraryAPIDemo.Application.Commands.BookLibraryAPIAuth
 
                 return new SigningCredentials(secret, SecurityAlgorithms.HmacSha256);
             }
+
             private async Task<List<Claim>> GetClaimsAsync()
             {
                 var claims = new List<Claim>
-            {
-               new Claim(ClaimTypes.Name, _user.UserName)
-            };
+                {
+                    new Claim(ClaimTypes.Name, _user.UserName)
+                };
 
                 return claims;
-
             }
 
             /// <summary>
@@ -95,7 +95,6 @@ namespace BookLibraryAPIDemo.Application.Commands.BookLibraryAPIAuth
             /// <param name="signingCredentials"></param>
             /// <param name="claims"></param>
             /// <returns></returns>
-
             private JwtSecurityToken GenerateTokenOptions(SigningCredentials signingCredentials, List<Claim> claims)
             {
                 var jwtSettings = _configuration.GetSection("JwtSettings");
@@ -110,8 +109,6 @@ namespace BookLibraryAPIDemo.Application.Commands.BookLibraryAPIAuth
 
                 return tokenOptions;
             }
-
-
         }
     }
 }

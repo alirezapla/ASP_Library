@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Identity;
 
 namespace BookLibraryAPIDemo.Application.Commands.Auth
 {
-
     public class RegisterUser : IRequest<IdentityResult>
     {
         public RegisterUserDTO Model { get; set; }

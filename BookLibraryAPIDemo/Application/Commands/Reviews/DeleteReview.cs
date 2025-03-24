@@ -6,13 +6,13 @@ using MediatR;
 
 namespace BookLibraryAPIDemo.Application.Commands.Reviews;
 
-public class DeleteReview : IRequest<string>
+public class DeleteReview : IRequest<DeleteDTO>
 {
     public string ReviewId { get; set; }
     public string BookId { get; set; }
 }
 
-public class DeleteReviewHandler : IRequestHandler<DeleteReview, string>
+public class DeleteReviewHandler : IRequestHandler<DeleteReview, DeleteDTO>
 {
     private readonly IBaseRepository<Review> _repository;
 
@@ -21,16 +21,18 @@ public class DeleteReviewHandler : IRequestHandler<DeleteReview, string>
         _repository = repository;
     }
 
-    public async Task<string> Handle(DeleteReview request, CancellationToken cancellationToken)
+    public async Task<DeleteDTO> Handle(DeleteReview request, CancellationToken cancellationToken)
     {
         var review = await _repository.GetByIdAsync(request.ReviewId);
-        if (review == null)
+        if (review == null || review.IsDeleted)
         {
             throw new KeyNotFoundException(request.ReviewId);
         }
 
-        await _repository.DeleteAsync(review);
-
-        return $"Review with Id {request.ReviewId} has been deleted";
+        await _repository.SoftDeleteAsync(review);
+        return new DeleteDTO()
+        {
+            Message = $"Review with Id {request.ReviewId} has been deleted"
+        };
     }
 }

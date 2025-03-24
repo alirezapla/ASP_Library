@@ -14,7 +14,7 @@ namespace BookLibraryAPIDemo.Application.Mapping
    .ForMember(dest => dest.Author, opt => opt.MapFrom(src => src.Author))
    .ForMember(dest => dest.Category, opt => opt.MapFrom(src => src.Category))
    .ForMember(dest => dest.Publisher, opt => opt.MapFrom(src => src.Publisher))
-   .ForMember(dest => dest.Review, opt => opt.MapFrom(src => src.Reviews))
+   .ForMember(dest => dest.Reviews, opt => opt.MapFrom(src => src.Reviews))
    .ForMember(dest => dest.BookDetail, opt => opt.MapFrom(src => src.BookDetail))
    .ReverseMap();
             
@@ -22,7 +22,7 @@ namespace BookLibraryAPIDemo.Application.Mapping
    .ForMember(dest => dest.AuthorId, opt => opt.MapFrom(src => src.AuthorId))
    .ForMember(dest => dest.CategoryId, opt => opt.MapFrom(src => src.CategoryId))
    .ForMember(dest => dest.PublisherId, opt => opt.MapFrom(src => src.PublisherId))
-   .ForMember(dest => dest.Review, opt => opt.MapFrom(src => src.Reviews))
+   .ForMember(dest => dest.Reviews, opt => opt.MapFrom(src => src.Reviews))
    .ForMember(dest => dest.BookDetailId, opt => opt.MapFrom(src => src.BookDetail))
    .ReverseMap();
 
