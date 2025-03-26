@@ -1,5 +1,6 @@
 ﻿using BookLibraryAPIDemo.Application.Commands.Publishers;
 using BookLibraryAPIDemo.Application.DTO;
+using BookLibraryAPIDemo.Application.DTO.Publisher;
 using BookLibraryAPIDemo.Application.Queries.Publishers;
 using BookLibraryAPIDemo.Infrastructure.Repositories;
 using Microsoft.AspNetCore.Mvc;
@@ -33,6 +34,17 @@ namespace BookLibraryAPIDemo.Controllers
             return Ok(await Mediator.Send(new GetPublisherById() {PublisherId = id}));
         }
 
+        [HttpGet("{id}/books")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PagedResult<PublisherWithBooksDto>))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> GetPublisherByIdWithBooksAsync([FromRoute] string id,
+            [FromQuery] int pageNumber = 1,
+            [FromQuery] int pageSize = 10)
+        {
+            return Ok(await Mediator.Send(new GetPublisherByIdWithBooks()
+                {PublisherId = id, PageNumber = pageNumber, PageSize = pageSize}));
+        }
+
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdatePublisherAsync([FromRoute] string id,
             [FromBody] UpdatePublisherDTO model)
@@ -43,7 +55,8 @@ namespace BookLibraryAPIDemo.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeletePublisherAsync([FromRoute] string id)
         {
-            return Ok(await Mediator.Send(new DeletePublisher {publisherId = id}));
+            await Mediator.Send(new DeletePublisher {publisherId = id});
+            return NoContent();
         }
     }
 }
