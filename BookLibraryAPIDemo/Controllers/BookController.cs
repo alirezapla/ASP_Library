@@ -36,13 +36,7 @@ namespace BookLibraryAPIDemo.Controllers
         {
             return Ok(await Mediator.Send(new GetBookById() {BookId = id}));
         }
-
-        [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateBookAsync([FromBody] UpdateBookDTO model, [FromRoute] string id)
-        {
-            return Ok(await Mediator.Send(new UpdateBook {Book = model, BookId = id}));
-        }
-
+        
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteBookAsync([FromRoute] string id)
         {
