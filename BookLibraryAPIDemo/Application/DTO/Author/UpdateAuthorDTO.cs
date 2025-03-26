@@ -1,4 +1,4 @@
-﻿namespace BookLibraryAPIDemo.Application.DTO
+﻿namespace BookLibraryAPIDemo.Application.DTO.Author
 {
     public class UpdateAuthorDTO
     {
