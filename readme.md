@@ -149,6 +149,8 @@ ASP_Library/
 
     GET /api/authors/{id} - Get an author by ID.
 
+    GET /api/authors/{id}/books - Get an author by ID with books.
+
     POST /api/authors - Add a new author.
 
     PUT /api/authors/{id} - Update an author.
@@ -160,6 +162,8 @@ ASP_Library/
     GET /api/publishers - Get all publishers.
 
     GET /api/publishers/{id} - Get a publisher by ID.
+
+    GET /api/publishers/{id}/books - Get a publisher by ID with books.
 
     POST /api/publishers - Add a new publisher.
 
@@ -173,6 +177,8 @@ ASP_Library/
 
     GET /api/categories/{id} - Get a category by ID.
 
+    GET /api/categories/{id}/books - Get a category by ID with books.
+
     POST /api/categories - Add a new category.
 
     PUT /api/categories/{id} - Update a category.
@@ -181,23 +187,25 @@ ASP_Library/
 
 ### Book Details
 
-    GET /api/books/{id}/details - Get book details by book ID.
+    GET /api/books/{id}/detail - Get book details by book ID.
 
-    POST /api/books/{id}/details - Add book details.
+    POST /api/books/{id}/detail - Add book details.
 
-    PUT /api/books/{id}/details - Update book details.
+    PUT /api/books/{id}/detail - Update book details.
 
-    DELETE /api/books/{id}/details - Delete book details.
+    DELETE /api/books/{id}/detail - Delete book details.
 
 ### Reviews
 
-    GET /api/reviews/{id} - Get review by review ID.
+    GET /api/books/{id}/reviews - Get all reviews.
 
-    POST /api/reviews/{id} - Add review.
+    GET /api/books/{id}/reviews/{reviewId} - Get review by review ID.
 
-    PUT /api/reviews/{id} - Update review.
+    POST /api/books/{id}/reviews - Add review.
 
-    DELETE /api/reviews/{id} - Delete review.
+    PUT /api/books/{id}/reviews/{reviewId} - Update review.
+
+    DELETE /api/books/{id}/reviews/{reviewId} - Delete review.
 
 
 ## 🛠️ Error Handling
