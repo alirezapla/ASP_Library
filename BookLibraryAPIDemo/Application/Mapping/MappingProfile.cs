@@ -27,12 +27,17 @@ namespace BookLibraryAPIDemo.Application.Mapping
    .ReverseMap();
 
             CreateMap<CreateBookDTO, Book>();
+            CreateMap<Book, IncludeBooksDTO>();
             
             CreateMap<Author, AuthorDTO>().ReverseMap();
             CreateMap<CreateAuthorDTO, Author>();
             CreateMap<UpdateAuthorDTO, Author>();
             
             CreateMap<Category, CategoryDTO>().ReverseMap();
+            CreateMap<Category, CategoryWithBooksDTO>()
+                .ForMember(dest => dest.Books, opt => opt.MapFrom(src => src.Books)) 
+                .ReverseMap();
+
             CreateMap<CreateCategoryDTO, Category>();
             CreateMap<UpdateCategoryDTO, Category>();
             

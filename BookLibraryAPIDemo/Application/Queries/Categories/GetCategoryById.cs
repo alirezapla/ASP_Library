@@ -5,9 +5,8 @@ using BookLibraryAPIDemo.Domain.Entities;
 using BookLibraryAPIDemo.Infrastructure.Interfaces;
 using MediatR;
 
-namespace BookLibraryAPIDemo.Application.Queries.BookLibraryAPICategory
+namespace BookLibraryAPIDemo.Application.Queries.Categories
 {
-
     public class GetCategoryById : IRequest<CategoryDTO>
     {
         public string CategoryId { get; set; }
@@ -27,7 +26,11 @@ namespace BookLibraryAPIDemo.Application.Queries.BookLibraryAPICategory
         public async Task<CategoryDTO> Handle(GetCategoryById request, CancellationToken cancellationToken)
         {
             var category = await _repository.GetByIdAsync(request.CategoryId);
-            if (category == null) { throw new CategoryNotFoundException(request.CategoryId); }
+            if (category == null)
+            {
+                throw new CategoryNotFoundException(request.CategoryId);
+            }
+
             var categoryModel = _mapper.Map<CategoryDTO>(category);
             return categoryModel;
         }

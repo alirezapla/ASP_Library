@@ -5,7 +5,7 @@ using BookLibraryAPIDemo.Infrastructure.Interfaces;
 using BookLibraryAPIDemo.Infrastructure.Repositories;
 using MediatR;
 
-namespace BookLibraryAPIDemo.Application.Queries.BookLibraryAPICategory
+namespace BookLibraryAPIDemo.Application.Queries.Categories
 {
     public class GetAllCategories : IRequest<PagedResult<CategoryDTO>>
     {

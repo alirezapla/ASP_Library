@@ -1,7 +1,7 @@
 ﻿using BookLibraryAPIDemo.Application.Commands.BookLibraryAPICategory;
 using BookLibraryAPIDemo.Application.Commands.Categorys;
 using BookLibraryAPIDemo.Application.DTO;
-using BookLibraryAPIDemo.Application.Queries.BookLibraryAPICategory;
+using BookLibraryAPIDemo.Application.Queries.Categories;
 using BookLibraryAPIDemo.Infrastructure.Repositories;
 using Microsoft.AspNetCore.Mvc;
 
@@ -15,7 +15,7 @@ namespace BookLibraryAPIDemo.Controllers
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
-            
+
             return Ok(await Mediator.Send(new CreateCategory {Category = model}));
         }
 
@@ -31,9 +31,20 @@ namespace BookLibraryAPIDemo.Controllers
 
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetCategoryByIdAsync(string id)
+        public async Task<IActionResult> GetCategoryByIdAsync([FromRoute] string id)
         {
             return Ok(await Mediator.Send(new GetCategoryById() {CategoryId = id}));
+        }
+
+        [HttpGet("{id}/books")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PagedResult<CategoryWithBooksDTO>))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> GetCategoryByIdWithBooksAsync([FromRoute] string id,
+            [FromQuery] int pageNumber = 1,
+            [FromQuery] int pageSize = 10)
+        {
+            return Ok(await Mediator.Send(new GetCategoryByIdWithBooks()
+                {CategoryId = id, PageNumber = pageNumber, PageSize = pageSize}));
         }
 
 
@@ -47,7 +58,8 @@ namespace BookLibraryAPIDemo.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteCategoryAsync([FromRoute] string id)
         {
-            return Ok(await Mediator.Send(new DeleteCategory {CategoryId = id}));
+            await Mediator.Send(new DeleteCategory {CategoryId = id});
+            return NoContent();
         }
     }
 }
