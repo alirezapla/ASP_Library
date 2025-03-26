@@ -1,7 +1,8 @@
-namespace BookLibraryAPIDemo.Application.DTO;
-
-public class IncludeBooksDTO
+namespace BookLibraryAPIDemo.Application.DTO.Book
 {
-    public string Id { get; set; }
-    public string Title { get; set; }
+    public class IncludeBooksDTO
+    {
+        public string Id { get; set; }
+        public string Title { get; set; }
+    }
 }

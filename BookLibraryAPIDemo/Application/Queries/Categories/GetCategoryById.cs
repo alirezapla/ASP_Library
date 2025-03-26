@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using BookLibraryAPIDemo.Application.DTO;
+using BookLibraryAPIDemo.Application.DTO.category;
 using BookLibraryAPIDemo.Application.Exceptions;
 using BookLibraryAPIDemo.Domain.Entities;
 using BookLibraryAPIDemo.Infrastructure.Interfaces;

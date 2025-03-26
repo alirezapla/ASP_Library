@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using BookLibraryAPIDemo.Application.DTO;
+using BookLibraryAPIDemo.Application.DTO.Book;
 using BookLibraryAPIDemo.Domain.Entities;
 using BookLibraryAPIDemo.Infrastructure.Interfaces;
 using MediatR;

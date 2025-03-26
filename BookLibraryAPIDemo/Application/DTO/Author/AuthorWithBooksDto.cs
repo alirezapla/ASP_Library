@@ -1,4 +1,6 @@
-﻿namespace BookLibraryAPIDemo.Application.DTO.Author
+﻿using BookLibraryAPIDemo.Application.DTO.Book;
+
+namespace BookLibraryAPIDemo.Application.DTO.Author
 {
     public class AuthorWithBooksDto
     {

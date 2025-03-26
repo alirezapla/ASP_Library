@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace BookLibraryAPIDemo.Application.DTO
+namespace BookLibraryAPIDemo.Application.DTO.category
 {
     public class CreateCategoryDTO
     {

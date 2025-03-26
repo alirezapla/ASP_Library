@@ -2,6 +2,7 @@
 using BookLibraryAPIDemo.Application.Commands.Books;
 using BookLibraryAPIDemo.Application.Commands.Reviews;
 using BookLibraryAPIDemo.Application.DTO;
+using BookLibraryAPIDemo.Application.DTO.Book;
 using BookLibraryAPIDemo.Application.Queries.BookDetails;
 using BookLibraryAPIDemo.Application.Queries.Books;
 using BookLibraryAPIDemo.Application.Queries.Reviews;

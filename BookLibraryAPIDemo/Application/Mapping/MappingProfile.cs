@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using BookLibraryAPIDemo.Application.DTO;
 using BookLibraryAPIDemo.Application.DTO.Author;
+using BookLibraryAPIDemo.Application.DTO.Book;
+using BookLibraryAPIDemo.Application.DTO.category;
 using BookLibraryAPIDemo.Application.DTO.Publisher;
 using BookLibraryAPIDemo.Domain.Entities;
 

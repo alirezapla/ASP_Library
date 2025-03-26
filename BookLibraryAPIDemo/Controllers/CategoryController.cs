@@ -1,6 +1,7 @@
 ﻿using BookLibraryAPIDemo.Application.Commands.BookLibraryAPICategory;
 using BookLibraryAPIDemo.Application.Commands.Categorys;
 using BookLibraryAPIDemo.Application.DTO;
+using BookLibraryAPIDemo.Application.DTO.category;
 using BookLibraryAPIDemo.Application.Queries.Categories;
 using BookLibraryAPIDemo.Infrastructure.Repositories;
 using Microsoft.AspNetCore.Mvc;

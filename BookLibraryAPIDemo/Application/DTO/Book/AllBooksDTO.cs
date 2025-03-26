@@ -1,4 +1,8 @@
-﻿namespace BookLibraryAPIDemo.Application.DTO
+﻿using BookLibraryAPIDemo.Application.DTO.Author;
+using BookLibraryAPIDemo.Application.DTO.category;
+using BookLibraryAPIDemo.Application.DTO.Publisher;
+
+namespace BookLibraryAPIDemo.Application.DTO.Book
 {
     public class AllBooksDTO
     {
