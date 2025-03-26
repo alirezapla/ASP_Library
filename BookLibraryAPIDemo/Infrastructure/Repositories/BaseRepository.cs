@@ -111,7 +111,7 @@ namespace BookLibraryAPIDemo.Infrastructure.Repositories
 
         public async Task<T> GetByIdAsync(string id, Expression<Func<T, object>> include)
         {
-            var query = _context.Set<T>().AsQueryable();
+            var query = _context.Set<T>().Where(e=> e.IsDeleted == false).AsQueryable();
 
             query = query.Include(include);
 
