@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using BookLibraryAPIDemo.Application.Commands.Authors;
-using BookLibraryAPIDemo.Application.DTO;
+using BookLibraryAPIDemo.Application.DTO.Author;
 using BookLibraryAPIDemo.Domain.Entities;
 using BookLibraryAPIDemo.Infrastructure.Interfaces;
 using FluentAssertions;
