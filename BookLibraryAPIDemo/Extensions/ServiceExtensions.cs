@@ -1,4 +1,6 @@
-﻿using BookLibraryAPIDemo.Application.Interfaces;
+﻿using System.Reflection;
+using System.Security.Claims;
+using BookLibraryAPIDemo.Application.Interfaces;
 using BookLibraryAPIDemo.Infrastructure.Context;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
@@ -9,10 +11,16 @@ using BookLibraryAPIDemo.Application.Behaviors;
 using BookLibraryAPIDemo.Application.Commands.BookLibraryAPICategory;
 using BookLibraryAPIDemo.Application.Mapping;
 using BookLibraryAPIDemo.Application.Services;
+using BookLibraryAPIDemo.Domain.Entities.RBAC;
 using BookLibraryAPIDemo.Infrastructure.Filters;
 using BookLibraryAPIDemo.Infrastructure.Interfaces;
 using BookLibraryAPIDemo.Infrastructure.Repositories;
+using BookLibraryAPIDemo.Security;
+using BookLibraryAPIDemo.Security.Extensions;
+using BookLibraryAPIDemo.Security.Models;
 using MediatR;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.OpenApi.Models;
@@ -30,6 +38,7 @@ namespace BookLibraryAPIDemo.Extensions
             services.AddSingleton<ILoggerManager, LoggerManager>();
 
             services.AddScoped<LogActionFilter>();
+            services.AddScoped<CustomAuthorizationFilter>();
 
             services.AddDbContext<BookLibraryContext>(o =>
             {
@@ -45,7 +54,7 @@ namespace BookLibraryAPIDemo.Extensions
                 {
                     AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(10) // Cache for 10 minutes
                 });
-            
+
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(CachingBehavior<,>));
 
             services.AddMediatR(m => m.RegisterServicesFromAssemblyContaining(typeof(CreateCategory)));
@@ -55,6 +64,7 @@ namespace BookLibraryAPIDemo.Extensions
             services.ConfigureCors(configuration);
 
             services.ConfigureIdentity();
+            services.AddSystemAuthorization();
 
             services.ConfigureJwt(configuration);
 
@@ -116,10 +126,40 @@ namespace BookLibraryAPIDemo.Extensions
             );
         }
 
+        private static IServiceCollection AddSystemAuthorization(this IServiceCollection serviceProvider)
+        {
+            serviceProvider.AddAuthorization(options =>
+            {
+                options.AddPolicy("CanRead",
+                    policy =>
+                    {
+                        policy.Requirements.Add(new AuthorizationRequirement("Read"));
+                    });
+                options.AddPolicy("CanWrite",
+                    policy =>
+                    {
+                        policy.RequireAuthenticatedUser();
+                        policy.Requirements.Add(new AuthorizationRequirement("Write"));
+                    });
+
+                options.AddPolicy("MinimumAge", policy =>
+                    policy.RequireClaim("DateOfBirth")
+                        .RequireAssertion(context =>
+                        {
+                            var dob = DateTime.Parse(context.User.FindFirstValue("DateOfBirth"));
+                            return DateTime.Now.Year - dob.Year >= 18;
+                        }));
+            });
+            serviceProvider.AddScoped<IClaimsTransformation, CustomClaimsTransformation>();
+            serviceProvider.AddSingleton<IAuthorizationHandler, CustomAuthorizationHandler>();
+            serviceProvider.AddSingleton<IAuthorizationPolicyProvider, PermissionPolicyProvider>();
+
+            return serviceProvider;
+        }
 
         private static void ConfigureIdentity(this IServiceCollection services)
         {
-            var builder = services.AddIdentityCore<IdentityUser>(o =>
+            services.AddIdentity<User, Role>(o =>
                 {
                     o.Password.RequireNonAlphanumeric = false;
                     o.Password.RequireDigit = true;

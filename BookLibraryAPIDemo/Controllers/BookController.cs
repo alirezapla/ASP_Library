@@ -7,6 +7,7 @@ using BookLibraryAPIDemo.Application.Queries.BookDetails;
 using BookLibraryAPIDemo.Application.Queries.Books;
 using BookLibraryAPIDemo.Application.Queries.Reviews;
 using BookLibraryAPIDemo.Infrastructure.Repositories;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BookLibraryAPIDemo.Controllers
@@ -15,6 +16,7 @@ namespace BookLibraryAPIDemo.Controllers
     public class BookController : BaseApiController
     {
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> CreateBookAsync([FromBody] CreateBookDTO model)
         {
             if (!ModelState.IsValid)
@@ -24,6 +26,7 @@ namespace BookLibraryAPIDemo.Controllers
         }
 
         [HttpGet]
+        [AllowAnonymous]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PagedResult<BookDTO>))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetBooksAsync([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
@@ -32,18 +35,21 @@ namespace BookLibraryAPIDemo.Controllers
         }
 
         [HttpGet("{id}")]
+        [Authorize(Policy = "CanRead")]
         public async Task<IActionResult> GetBookByIdAsync(string id)
         {
             return Ok(await Mediator.Send(new GetBookById() {BookId = id}));
         }
         
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteBookAsync([FromRoute] string id)
         {
             return Ok(await Mediator.Send(new DeleteBook {BookId = id}));
         }
 
         [HttpPost("{id}/detail")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> CreateBookDetailAsync([FromBody] CreateBookDetailDTO model,
             [FromRoute] string id)
         {
@@ -55,12 +61,14 @@ namespace BookLibraryAPIDemo.Controllers
         }
 
         [HttpGet("{id}/detail")]
+        [Authorize(Policy = "CanRead")]
         public async Task<IActionResult> GetBookDetailsAsync([FromRoute] string id)
         {
             return Ok(await Mediator.Send(new GetBookDetails() {BookId = id}));
         }
 
         [HttpPut("{id}/detail")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> UpdateBookDetailsAsync([FromRoute] string id,
             [FromBody] UpdateBookDetailDto model)
         {
@@ -68,6 +76,7 @@ namespace BookLibraryAPIDemo.Controllers
         }
 
         [HttpGet("{id}/reviews")]
+        [Authorize(Policy = "CanRead")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PagedResult<ReviewDTO>))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetAllReviews([FromQuery] int pageNumber, [FromQuery] int pageSize,
@@ -77,12 +86,14 @@ namespace BookLibraryAPIDemo.Controllers
         }
 
         [HttpGet(("{id}/reviews/{reviewId}"))]
+        [Authorize(Policy = "CanRead")]
         public async Task<IActionResult> GetReviewById([FromRoute] string id, [FromRoute] string reviewId)
         {
             return Ok(await Mediator.Send(new GetReviewById()));
         }
 
         [HttpPost("{id}/reviews")]
+        [Authorize(Policy = "CanWrite")]
         public async Task<IActionResult> CreateReview([FromBody] CreateReviewDTO model, [FromRoute] string id)
         {
             if (!ModelState.IsValid)
@@ -93,6 +104,7 @@ namespace BookLibraryAPIDemo.Controllers
         }
 
         [HttpDelete("{id}/reviews/{reviewId}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> CreateReview([FromRoute] string id, [FromRoute] string reviewId)
         {
             return Ok(await Mediator.Send(new DeleteReview() {ReviewId = reviewId, BookId = id}));

@@ -1,7 +1,7 @@
 # 📚 ASP Library Project
 
 This project is a simple library management system built using ASP.NET Core and Entity Framework Core. It provides functionalities to manage books, authors, publishers, categories, and book details.
-
+fully support async operations
 
 ## 🚀 Features
 
@@ -38,6 +38,10 @@ This project is a simple library management system built using ASP.NET Core and 
     *   Generate reports on popular books, borrowing trends, overdue books, etc.
 *   **Search Functionality:**
     * Robust search capabilities across all entities.
+*   **Security:**
+    *  Dynamic claims transformation based on user roles
+    *  Custom permission requirements
+    *  Extensible authorization handlers.
     
     
 ## 🛠️ Technologies Used
@@ -216,5 +220,13 @@ The project includes a global exception handler middleware (GlobalExceptionHandl
 
     404 Not Found: Resource not found.
 
- 
+## Security 
+
+### provides authorization methodology that combines:
+
+- #### Supports Role based access control
+- #### Supports Permission based authorization
+- #### Dynamic claims transformation
+- #### Can Define Custom policy
+
 ## ERD
