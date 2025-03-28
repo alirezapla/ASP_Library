@@ -6,28 +6,32 @@ using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using BookLibraryAPIDemo.Application.Exceptions;
+using BookLibraryAPIDemo.Domain.Entities.RBAC;
+using BookLibraryAPIDemo.Infrastructure.Context;
+using Microsoft.EntityFrameworkCore;
 
 namespace BookLibraryAPIDemo.Application.Commands.Auth
 {
-    public class Login : IRequest<object>
+    public class Login : IRequest<UserPrincipalDTO>
     {
         public LoginDTO LoginDTO { get; set; }
 
 
-        public class LoginHandler : IRequestHandler<Login, object>
+        public class LoginHandler : IRequestHandler<Login, UserPrincipalDTO>
         {
-            private IdentityUser _user;
-            private readonly UserManager<IdentityUser> _userManager;
             private readonly ILoggerManager _logger;
             private readonly IConfiguration _configuration;
+            private readonly BookLibraryContext _context;
+            private readonly UserManager<User> _userManager;
 
-
-            public LoginHandler(UserManager<IdentityUser> userManager, ILoggerManager logger,
-                IConfiguration configuration)
+            public LoginHandler(ILoggerManager logger, IConfiguration configuration, BookLibraryContext context,
+                UserManager<User> userManager)
             {
-                _userManager = userManager;
                 _logger = logger;
                 _configuration = configuration;
+                _context = context;
+                _userManager = userManager;
             }
 
 
@@ -37,21 +41,22 @@ namespace BookLibraryAPIDemo.Application.Commands.Auth
             /// <param name="request"></param>
             /// <param name="cancellationToken"></param>
             /// <returns></returns>
-            public async Task<object> Handle(Login request, CancellationToken cancellationToken)
+            public async Task<UserPrincipalDTO> Handle(Login request, CancellationToken cancellationToken)
             {
-                _user = await _userManager.FindByEmailAsync(request.LoginDTO.Email);
-                if (_user == null || !(await _userManager.CheckPasswordAsync(_user, request.LoginDTO.Password)))
+                var user = await _context.Users.Include(u => u.Roles)
+                    .FirstOrDefaultAsync(u => u.Email == request.LoginDTO.Email, cancellationToken: cancellationToken);
+                if (user == null || !(await _userManager.CheckPasswordAsync(user, request.LoginDTO.Password)))
                 {
                     _logger.LogWarn($"{nameof(Login)}: Login failed. Wrong email or password");
-                    return new {Message = "Login failed. Wrong email or password"};
+                    throw new LogInFailedException("Login failed. Wrong email or password");
                 }
 
-                var token = await CreateToken();
-                return new
+                var token = await CreateToken(user);
+                return new UserPrincipalDTO
                 {
                     Message = "User logged in successfully",
-                    Username = _user.UserName,
-                    Email = _user.Email,
+                    Username = user.UserName,
+                    Email = user.Email,
                     Token = token
                 };
             }
@@ -61,10 +66,10 @@ namespace BookLibraryAPIDemo.Application.Commands.Auth
             ///  Creating token 
             /// </summary>
             /// <returns></returns>
-            public async Task<string> CreateToken()
+            public async Task<string> CreateToken(User user)
             {
                 var signingCredentials = GetSigningCredentials();
-                var claims = await GetClaimsAsync();
+                var claims = await GetClaimsAsync(user);
                 var tokenOptions = GenerateTokenOptions(signingCredentials, claims);
 
                 return new JwtSecurityTokenHandler().WriteToken(tokenOptions);
@@ -79,14 +84,22 @@ namespace BookLibraryAPIDemo.Application.Commands.Auth
                 return new SigningCredentials(secret, SecurityAlgorithms.HmacSha256);
             }
 
-            private async Task<List<Claim>> GetClaimsAsync()
+            private async Task<List<Claim>> GetClaimsAsync(User user)
             {
-                var claims = new List<Claim>
-                {
-                    new Claim(ClaimTypes.Name, _user.UserName)
-                };
 
-                return claims;
+                var authClaims = new List<Claim>
+                {
+                    new Claim(ClaimTypes.Name, user.UserName),
+                    new Claim(ClaimTypes.Sid, user.Id),
+                    new Claim(ClaimTypes.Dns, user.Dns),
+                    new Claim(ClaimTypes.DateOfBirth, user.DateOfBirth.ToString("yyyy-MM-dd"))
+                };
+                foreach (var userRole in user.Roles)
+                {
+                    authClaims.Add(new Claim(ClaimTypes.Role, userRole.Name!));
+                }
+
+                return authClaims;
             }
 
             /// <summary>
