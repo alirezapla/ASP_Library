@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using BookLibraryAPIDemo.Application.DTO;
 using BookLibraryAPIDemo.Application.DTO.category;
+using BookLibraryAPIDemo.Application.Models;
 using BookLibraryAPIDemo.Domain.Entities;
 using BookLibraryAPIDemo.Infrastructure.Interfaces;
 using BookLibraryAPIDemo.Infrastructure.Repositories;
@@ -10,8 +11,8 @@ namespace BookLibraryAPIDemo.Application.Queries.Categories
 {
     public class GetAllCategories : IRequest<PagedResult<CategoryDTO>>
     {
-        public int PageNumber { get; set; } = 1;
-        public int PageSize { get; set; } = 10;
+        public PaginationParams PaginationParams { get; set; }
+        public SortParams SortParams { get; set; }
     }
 
     public class GetAllCategoriesHandler : IRequestHandler<GetAllCategories, PagedResult<CategoryDTO>>
@@ -28,14 +29,15 @@ namespace BookLibraryAPIDemo.Application.Queries.Categories
         public async Task<PagedResult<CategoryDTO>> Handle(GetAllCategories request,
             CancellationToken cancellationToken)
         {
-            var (allCategories, totalCount) = await _repository.GetAllAsync(request.PageNumber, request.PageSize);
+            var (allCategories, totalCount) =
+                await _repository.GetAllAsync(request.PaginationParams, sortParams:request.SortParams);
             var results = _mapper.Map<List<CategoryDTO>>(allCategories);
             return new PagedResult<CategoryDTO>
             {
                 Items = results,
                 TotalCount = totalCount,
-                PageNumber = request.PageNumber,
-                PageSize = request.PageSize
+                PageNumber = request.PaginationParams.Number,
+                PageSize = request.PaginationParams.Size
             };
         }
     }

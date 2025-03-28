@@ -1,5 +1,7 @@
 ﻿using System.Linq.Expressions;
+using System.Reflection;
 using BookLibraryAPIDemo.Application.Exceptions;
+using BookLibraryAPIDemo.Application.Models;
 using BookLibraryAPIDemo.Infrastructure.Context;
 using BookLibraryAPIDemo.Infrastructure.Interfaces;
 using Microsoft.Data.SqlClient;
@@ -70,14 +72,14 @@ namespace BookLibraryAPIDemo.Infrastructure.Repositories
 
         public async Task<List<T>> GetAllAsync()
         {
-            return await _context.Set<T>().AsNoTracking().Where(e=> e.IsDeleted == false).ToListAsync();
+            return await _context.Set<T>().AsNoTracking().Where(e => e.IsDeleted == false).ToListAsync();
         }
 
 
-        public async Task<(List<T> Items, int TotalCount)> GetAllAsync(int pageNumber = 1, int pageSize = 10,
-            ISpecification<T> spec = null)
+        public async Task<(List<T> Items, int TotalCount)> GetAllAsync(PaginationParams paginationParams,
+            ISpecification<T> spec = null, SortParams sortParams = null)
         {
-            var query = _context.Set<T>().Where(e=> e.IsDeleted == false).AsQueryable();
+            var query = _context.Set<T>().Where(e => e.IsDeleted == false).AsQueryable();
 
             if (spec != null)
             {
@@ -95,10 +97,12 @@ namespace BookLibraryAPIDemo.Infrastructure.Repositories
                 }
             }
 
+            query = ApplySorting(query, sortParams);
+
             var totalCount = await query.CountAsync();
             var items = await query
-                .Skip((pageNumber - 1) * pageSize)
-                .Take(pageSize)
+                .Skip((paginationParams.Number - 1) * paginationParams.Size)
+                .Take(paginationParams.Size)
                 .ToListAsync();
 
             return (items, totalCount);
@@ -111,7 +115,7 @@ namespace BookLibraryAPIDemo.Infrastructure.Repositories
 
         public async Task<T> GetByIdAsync(string id, Expression<Func<T, object>> include)
         {
-            var query = _context.Set<T>().Where(e=> e.IsDeleted == false).AsQueryable();
+            var query = _context.Set<T>().Where(e => e.IsDeleted == false).AsQueryable();
 
             query = query.Include(include);
 
@@ -131,12 +135,37 @@ namespace BookLibraryAPIDemo.Infrastructure.Repositories
                 throw new RepositoryException("An error occurred while updating the entity.", ex);
             }
         }
-        
+
         private static string ExtractDuplicateValueFromErrorMessage(string errorMessage)
         {
             var startIndex = errorMessage.LastIndexOf('(') + 1;
             var endIndex = errorMessage.LastIndexOf(')');
             return errorMessage.Substring(startIndex, endIndex - startIndex);
         }
+
+        private static IQueryable<T> ApplySorting(IQueryable<T> query, SortParams sortParams)
+        {
+            if (sortParams == null)
+                return query;
+
+            if (string.IsNullOrWhiteSpace(sortParams.SortBy) || !_allowedSortColumns.Contains(sortParams.SortBy))
+                return query;
+
+            var propertyInfo = typeof(T).GetProperty(sortParams.SortBy,
+                BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance);
+
+            if (propertyInfo == null)
+                return query;
+
+            return sortParams.SortDescending
+                ? query.OrderByDescending(x => EF.Property<object>(x, sortParams.SortBy))
+                : query.OrderBy(x => EF.Property<object>(x, sortParams.SortBy));
+        }
+
+
+        private static readonly HashSet<string> _allowedSortColumns = new()
+        {
+            "Title", "Author", "PublicationDate", "Price", "PublisherName", "Name"
+        };
     }
 }

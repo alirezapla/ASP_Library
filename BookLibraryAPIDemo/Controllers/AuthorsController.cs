@@ -1,6 +1,7 @@
 ﻿using BookLibraryAPIDemo.Application.Commands.Authors;
 using BookLibraryAPIDemo.Application.DTO;
 using BookLibraryAPIDemo.Application.DTO.Author;
+using BookLibraryAPIDemo.Application.Models;
 using BookLibraryAPIDemo.Application.Queries.Authors;
 using BookLibraryAPIDemo.Infrastructure.Repositories;
 using Microsoft.AspNetCore.Authorization;
@@ -25,9 +26,14 @@ namespace BookLibraryAPIDemo.Controllers
         [AllowAnonymous]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PagedResult<AuthorDTO>))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> GetAuthorsAsync([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
+        public async Task<IActionResult> GetAuthorsAsync([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10,
+            [FromQuery] string sortBy = "Name", [FromQuery] bool sortDescending = false)
         {
-            return Ok(await Mediator.Send(new GetAllAuthors() {PageNumber = pageNumber, PageSize = pageSize}));
+            return Ok(await Mediator.Send(new GetAllAuthors()
+            {
+                PaginationParams = new PaginationParams() {Number = pageNumber, Size = pageSize},
+                SortParams = new SortParams() {SortBy = sortBy, SortDescending = sortDescending}
+            }));
         }
 
         [HttpGet("{id}")]
@@ -42,11 +48,14 @@ namespace BookLibraryAPIDemo.Controllers
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PagedResult<AuthorWithBooksDto>))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetAuthorByIdWithBooksAsync([FromRoute] string id,
-            [FromQuery] int pageNumber = 1,
-            [FromQuery] int pageSize = 10)
+            [FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10,
+            [FromQuery] string sortBy = "Title", [FromQuery] bool sortDescending = false)
         {
             return Ok(await Mediator.Send(new GetAuthorByIdWithBooks()
-                {AuthorId = id, PageNumber = pageNumber, PageSize = pageSize}));
+            {
+                AuthorId = id, PaginationParams = new PaginationParams() {Number = pageNumber, Size = pageSize},
+                SortParams = new SortParams() {SortBy = sortBy, SortDescending = sortDescending}
+            }));
         }
 
         [HttpPut("{id}")]
