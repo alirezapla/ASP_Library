@@ -2,17 +2,19 @@
 using BookLibraryAPIDemo.Application.DTO;
 using BookLibraryAPIDemo.Application.DTO.category;
 using BookLibraryAPIDemo.Application.Exceptions;
+using BookLibraryAPIDemo.Application.Models;
 using BookLibraryAPIDemo.Domain.Entities;
 using BookLibraryAPIDemo.Infrastructure.Interfaces;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 
 namespace BookLibraryAPIDemo.Application.Queries.Categories
 {
     public class GetCategoryByIdWithBooks : IRequest<CategoryWithBooksDTO>
     {
         public string CategoryId { get; set; }
-        public int PageNumber { get; set; } = 1;
-        public int PageSize { get; set; } = 10;
+        public PaginationParams PaginationParams { get; set; }
+        public SortParams SortParams { get; set; }
     }
 
     public class GetCategoryByIdWithBooksHandler : IRequestHandler<GetCategoryByIdWithBooks, CategoryWithBooksDTO>
@@ -36,7 +38,10 @@ namespace BookLibraryAPIDemo.Application.Queries.Categories
                 throw new CategoryNotFoundException(request.CategoryId);
             }
 
-            var paginatedBooks = category.Books.Skip((request.PageNumber - 1) * request.PageSize).Take(request.PageSize)
+            var paginatedBooks = category.Books
+                .Skip((request.PaginationParams.Number - 1) * request.PaginationParams.Size)
+                .Take(request.PaginationParams.Size)
+                .OrderBy(b => EF.Property<object>(b, request.SortParams.SortBy))
                 .ToList();
             category.Books = paginatedBooks;
             return _mapper.Map<CategoryWithBooksDTO>(category);

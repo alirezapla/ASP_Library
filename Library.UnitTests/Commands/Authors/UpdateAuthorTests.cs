@@ -33,7 +33,6 @@ public class UpdateAuthorHandlerTests
             Id = authorId,
             Author = new UpdateAuthorDTO
             {
-                Name = "Updated Name",
                 Bio = "Updated Bio"
             }
         };
@@ -51,7 +50,7 @@ public class UpdateAuthorHandlerTests
     public async Task UpdateAuthor_ShouldUpdateAuthor_WhenAuthorExists()
     {
         // Arrange
-        var request = new UpdateAuthor {Id = "1", Author = new UpdateAuthorDTO {Name = "Updated Author"}};
+        var request = new UpdateAuthor {Id = "1", Author = new UpdateAuthorDTO {Bio = "Updated Author"}};
         var existingAuthor = new Author {Id = "1", Name = "Old Author"};
         var updatedAuthor = new Author {Id = "1", Name = "Updated Author"};
         var expectedDto = new AuthorDTO {Name = "Updated Author"};

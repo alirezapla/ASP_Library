@@ -1,17 +1,19 @@
 ﻿using AutoMapper;
 using BookLibraryAPIDemo.Application.DTO.Publisher;
 using BookLibraryAPIDemo.Application.Exceptions;
+using BookLibraryAPIDemo.Application.Models;
 using BookLibraryAPIDemo.Domain.Entities;
 using BookLibraryAPIDemo.Infrastructure.Interfaces;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 
 namespace BookLibraryAPIDemo.Application.Queries.Publishers
 {
     public class GetPublisherByIdWithBooks : IRequest<PublisherWithBooksDto>
     {
         public string PublisherId { get; set; }
-        public int PageNumber { get; set; } = 1;
-        public int PageSize { get; set; } = 10;
+        public PaginationParams PaginationParams { get; set; }
+        public SortParams SortParams { get; set; }
     }
 
     public class GetPublisherByIdWithBooksHandler : IRequestHandler<GetPublisherByIdWithBooks, PublisherWithBooksDto>
@@ -35,8 +37,10 @@ namespace BookLibraryAPIDemo.Application.Queries.Publishers
                 throw new PublisherNotFoundException(request.PublisherId);
             }
 
-            var paginatedBooks = publisher.Books.Skip((request.PageNumber - 1) * request.PageSize)
-                .Take(request.PageSize)
+            var paginatedBooks = publisher.Books
+                .Skip((request.PaginationParams.Number - 1) * request.PaginationParams.Size)
+                .Take(request.PaginationParams.Size)
+                .OrderBy(b => EF.Property<object>(b, request.SortParams.SortBy))
                 .ToList();
             publisher.Books = paginatedBooks;
             return _mapper.Map<PublisherWithBooksDto>(publisher);
