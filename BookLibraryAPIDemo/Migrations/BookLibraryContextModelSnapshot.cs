@@ -228,9 +228,9 @@ namespace BookLibraryAPIDemo.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "700e44f2-a2ad-4139-8ac1-a8171729488d",
+                            Id = "470389e2-4c68-4efd-850a-ed3282ae236e",
                             CreatedBy = "system",
-                            CreatedDate = new DateTime(2025, 3, 23, 19, 40, 9, 254, DateTimeKind.Utc).AddTicks(6834),
+                            CreatedDate = new DateTime(2025, 3, 28, 13, 50, 2, 470, DateTimeKind.Utc).AddTicks(3081),
                             DeletedBy = "",
                             Description = "This is about Tech",
                             IsDeleted = false,
@@ -239,9 +239,9 @@ namespace BookLibraryAPIDemo.Migrations
                         },
                         new
                         {
-                            Id = "8b39aabe-6c51-4528-a200-c33d0f8d1f4e",
+                            Id = "8fece538-ab92-4316-9c19-6693514dc283",
                             CreatedBy = "system",
-                            CreatedDate = new DateTime(2025, 3, 23, 19, 40, 9, 254, DateTimeKind.Utc).AddTicks(6851),
+                            CreatedDate = new DateTime(2025, 3, 28, 13, 50, 2, 470, DateTimeKind.Utc).AddTicks(3091),
                             DeletedBy = "",
                             Description = "Books on Finance ",
                             IsDeleted = false,
@@ -250,9 +250,9 @@ namespace BookLibraryAPIDemo.Migrations
                         },
                         new
                         {
-                            Id = "ebe07541-97db-4f0b-95ce-adebfae77667",
+                            Id = "bd97c0cc-7e68-4a59-935d-8d7d12269cbe",
                             CreatedBy = "system",
-                            CreatedDate = new DateTime(2025, 3, 23, 19, 40, 9, 254, DateTimeKind.Utc).AddTicks(6865),
+                            CreatedDate = new DateTime(2025, 3, 28, 13, 50, 2, 470, DateTimeKind.Utc).AddTicks(3099),
                             DeletedBy = "",
                             Description = "Books on science and nature",
                             IsDeleted = false,
@@ -312,6 +312,229 @@ namespace BookLibraryAPIDemo.Migrations
                         .IsUnique();
 
                     b.ToTable("Publishers");
+                });
+
+            modelBuilder.Entity("BookLibraryAPIDemo.Domain.Entities.RBAC.Permission", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Permissions", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Name = "Read"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Name = "Write"
+                        });
+                });
+
+            modelBuilder.Entity("BookLibraryAPIDemo.Domain.Entities.RBAC.Role", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("ConcurrencyStamp")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("NormalizedName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Roles", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "0021877C-3F5F-45E3-BE2C-A339601532B6",
+                            Name = "Admin"
+                        },
+                        new
+                        {
+                            Id = "4AA5C7A2-9769-4D6D-B0FB-4C1EE0CD7B22",
+                            Name = "User"
+                        });
+                });
+
+            modelBuilder.Entity("BookLibraryAPIDemo.Domain.Entities.RBAC.RolePermission", b =>
+                {
+                    b.Property<string>("RoleId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("PermissionId")
+                        .HasColumnType("int");
+
+                    b.HasKey("RoleId", "PermissionId");
+
+                    b.HasIndex("PermissionId");
+
+                    b.ToTable("RolePermissions", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            RoleId = "0021877C-3F5F-45E3-BE2C-A339601532B6",
+                            PermissionId = 1
+                        },
+                        new
+                        {
+                            RoleId = "0021877C-3F5F-45E3-BE2C-A339601532B6",
+                            PermissionId = 2
+                        },
+                        new
+                        {
+                            RoleId = "4AA5C7A2-9769-4D6D-B0FB-4C1EE0CD7B22",
+                            PermissionId = 1
+                        });
+                });
+
+            modelBuilder.Entity("BookLibraryAPIDemo.Domain.Entities.RBAC.User", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("AccessFailedCount")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ConcurrencyStamp")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("DateOfBirth")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("DeletedBy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("DeletedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Dns")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<bool>("EmailConfirmed")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("LockoutEnabled")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTimeOffset?>("LockoutEnd")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("NormalizedEmail")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("NormalizedUserName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PasswordHash")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PhoneNumber")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("PhoneNumberConfirmed")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("SecurityStamp")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("TwoFactorEnabled")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("UpdatedBy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UserName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Email", "IsDeleted")
+                        .IsUnique();
+
+                    b.ToTable("Users", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "32F8F8D1-5510-45D9-9B39-29A35FDD85EC",
+                            AccessFailedCount = 0,
+                            ConcurrencyStamp = "daa294b7-0183-4384-b9f6-da344edc79a4",
+                            CreatedBy = "system",
+                            CreatedDate = new DateTime(2025, 3, 28, 13, 50, 2, 477, DateTimeKind.Utc).AddTicks(6110),
+                            DateOfBirth = new DateTime(1989, 4, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DeletedBy = "",
+                            Email = "a@h.c",
+                            EmailConfirmed = false,
+                            IsDeleted = false,
+                            LockoutEnabled = false,
+                            PhoneNumberConfirmed = false,
+                            TwoFactorEnabled = false,
+                            UpdatedBy = "",
+                            UserName = "Admin"
+                        });
+                });
+
+            modelBuilder.Entity("BookLibraryAPIDemo.Domain.Entities.RBAC.UserRole", b =>
+                {
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("RoleId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("UserId", "RoleId");
+
+                    b.HasIndex("RoleId");
+
+                    b.ToTable("UserRoles", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            UserId = "32F8F8D1-5510-45D9-9B39-29A35FDD85EC",
+                            RoleId = "0021877C-3F5F-45E3-BE2C-A339601532B6"
+                        });
                 });
 
             modelBuilder.Entity("BookLibraryAPIDemo.Domain.Entities.Review", b =>
@@ -599,6 +822,36 @@ namespace BookLibraryAPIDemo.Migrations
                         .IsRequired();
 
                     b.Navigation("Book");
+                });
+
+            modelBuilder.Entity("BookLibraryAPIDemo.Domain.Entities.RBAC.RolePermission", b =>
+                {
+                    b.HasOne("BookLibraryAPIDemo.Domain.Entities.RBAC.Permission", null)
+                        .WithMany()
+                        .HasForeignKey("PermissionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("BookLibraryAPIDemo.Domain.Entities.RBAC.Role", null)
+                        .WithMany()
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("BookLibraryAPIDemo.Domain.Entities.RBAC.UserRole", b =>
+                {
+                    b.HasOne("BookLibraryAPIDemo.Domain.Entities.RBAC.Role", null)
+                        .WithMany()
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("BookLibraryAPIDemo.Domain.Entities.RBAC.User", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("BookLibraryAPIDemo.Domain.Entities.Review", b =>
