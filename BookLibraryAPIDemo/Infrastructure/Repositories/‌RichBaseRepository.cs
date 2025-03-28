@@ -5,6 +5,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using BookLibraryAPIDemo.Application.Exceptions;
+using BookLibraryAPIDemo.Application.Models;
 using BookLibraryAPIDemo.Infrastructure.Interfaces;
 using BookLibraryAPIDemo.Infrastructure.Repositories;
 
@@ -108,7 +109,12 @@ public class RichBaseRepository<T> : IBaseRepository<T> where T : class
     {
         throw new NotImplementedException();
     }
-    
+
+    public Task<(List<T> Items, int TotalCount)> GetAllAsync(PaginationParams paginationParams, ISpecification<T> spec = null, SortParams sort = null)
+    {
+        throw new NotImplementedException();
+    }
+
     public async Task<T> GetByIdAsync(string id)
     {
         return await _context.Set<T>().FindAsync(id);

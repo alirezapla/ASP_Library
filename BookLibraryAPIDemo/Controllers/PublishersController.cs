@@ -1,6 +1,7 @@
 ﻿using BookLibraryAPIDemo.Application.Commands.Publishers;
 using BookLibraryAPIDemo.Application.DTO;
 using BookLibraryAPIDemo.Application.DTO.Publisher;
+using BookLibraryAPIDemo.Application.Models;
 using BookLibraryAPIDemo.Application.Queries.Publishers;
 using BookLibraryAPIDemo.Infrastructure.Repositories;
 using Microsoft.AspNetCore.Authorization;
@@ -26,9 +27,14 @@ namespace BookLibraryAPIDemo.Controllers
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PagedResult<PublisherDTO>))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetPublishersAsync([FromQuery] int pageNumber = 1,
-            [FromQuery] int pageSize = 10)
+            [FromQuery] int pageSize = 10, [FromQuery] string sortBy = "PublisherName", [FromQuery] bool sortDescending = false)
+
         {
-            return Ok(await Mediator.Send(new GetAllPublisher() {PageNumber = pageNumber, PageSize = pageSize}));
+            return Ok(await Mediator.Send(new GetAllPublisher()
+            {
+                PaginationParams = new PaginationParams() {Number = pageNumber, Size = pageSize},
+                SortParams = new SortParams() {SortBy = sortBy, SortDescending = sortDescending}
+            }));
         }
 
         [HttpGet("{id}")]
@@ -43,11 +49,14 @@ namespace BookLibraryAPIDemo.Controllers
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PagedResult<PublisherWithBooksDto>))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetPublisherByIdWithBooksAsync([FromRoute] string id,
-            [FromQuery] int pageNumber = 1,
-            [FromQuery] int pageSize = 10)
+            [FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10,
+            [FromQuery] string sortBy = "Title", [FromQuery] bool sortDescending = false)
         {
             return Ok(await Mediator.Send(new GetPublisherByIdWithBooks()
-                {PublisherId = id, PageNumber = pageNumber, PageSize = pageSize}));
+            {
+                PublisherId = id, PaginationParams = new PaginationParams() {Number = pageNumber, Size = pageSize},
+                SortParams = new SortParams() {SortBy = sortBy, SortDescending = sortDescending}
+            }));
         }
 
         [HttpPut("{id}")]

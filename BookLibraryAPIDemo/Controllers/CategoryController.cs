@@ -2,6 +2,7 @@
 using BookLibraryAPIDemo.Application.Commands.Categorys;
 using BookLibraryAPIDemo.Application.DTO;
 using BookLibraryAPIDemo.Application.DTO.category;
+using BookLibraryAPIDemo.Application.Models;
 using BookLibraryAPIDemo.Application.Queries.Categories;
 using BookLibraryAPIDemo.Infrastructure.Repositories;
 using Microsoft.AspNetCore.Authorization;
@@ -28,9 +29,13 @@ namespace BookLibraryAPIDemo.Controllers
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PagedResult<CategoryDTO>))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetCategoriesAsync([FromQuery] int pageNumber = 1,
-            [FromQuery] int pageSize = 10)
+            [FromQuery] int pageSize = 10, [FromQuery] string sortBy = "Name", [FromQuery] bool sortDescending = false)
         {
-            return Ok(await Mediator.Send(new GetAllCategories() {PageNumber = pageNumber, PageSize = pageSize}));
+            return Ok(await Mediator.Send(new GetAllCategories()
+            {
+                PaginationParams = new PaginationParams() {Number = pageNumber, Size = pageSize},
+                SortParams = new SortParams() {SortBy = sortBy, SortDescending = sortDescending}
+            }));
         }
 
 
@@ -46,11 +51,14 @@ namespace BookLibraryAPIDemo.Controllers
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PagedResult<CategoryWithBooksDTO>))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetCategoryByIdWithBooksAsync([FromRoute] string id,
-            [FromQuery] int pageNumber = 1,
-            [FromQuery] int pageSize = 10)
+            [FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10,
+            [FromQuery] string sortBy = "Title", [FromQuery] bool sortDescending = false)
         {
             return Ok(await Mediator.Send(new GetCategoryByIdWithBooks()
-                {CategoryId = id, PageNumber = pageNumber, PageSize = pageSize}));
+            {
+                PaginationParams = new PaginationParams() {Number = pageNumber, Size = pageSize},
+                SortParams = new SortParams() {SortBy = sortBy, SortDescending = sortDescending}
+            }));
         }
 
 

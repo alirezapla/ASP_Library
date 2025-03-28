@@ -1,5 +1,6 @@
 using AutoMapper;
 using BookLibraryAPIDemo.Application.DTO;
+using BookLibraryAPIDemo.Application.Models;
 using BookLibraryAPIDemo.Domain.Entities;
 using BookLibraryAPIDemo.Infrastructure.Interfaces;
 using BookLibraryAPIDemo.Infrastructure.Repositories;
@@ -9,8 +10,8 @@ namespace BookLibraryAPIDemo.Application.Queries.Reviews;
 
 public class GetAllReviews : IRequest<PagedResult<ReviewDTO>>
 {
-    public int PageNumber { get; set; } = 1;
-    public int PageSize { get; set; } = 10;
+    public PaginationParams PaginationParams { get; set; }
+    public SortParams SortParams { get; set; }
 }
 
 public class GetAllReviewsHandler : IRequestHandler<GetAllReviews, PagedResult<ReviewDTO>>
@@ -26,14 +27,15 @@ public class GetAllReviewsHandler : IRequestHandler<GetAllReviews, PagedResult<R
 
     public async Task<PagedResult<ReviewDTO>> Handle(GetAllReviews request, CancellationToken cancellationToken)
     {
-        var (allReviews, totalCount) = await _repository.GetAllAsync(request.PageNumber, request.PageSize);
+        var (allReviews, totalCount) =
+            await _repository.GetAllAsync(request.PaginationParams, sortParams: request.SortParams);
         var results = _mapper.Map<List<ReviewDTO>>(allReviews);
         return new PagedResult<ReviewDTO>
         {
             Items = results,
             TotalCount = totalCount,
-            PageNumber = request.PageNumber,
-            PageSize = request.PageSize
+            PageNumber = request.PaginationParams.Number,
+            PageSize = request.PaginationParams.Size
         };
     }
 }
