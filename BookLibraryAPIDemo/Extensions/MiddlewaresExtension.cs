@@ -32,7 +32,7 @@ public static class MiddlewaresExtension
 
     private static void ConfigureMyCustomMiddlewares(this WebApplication app)
     {
-        app.UseMiddleware<AutomaticDbMigratorMiddleware>();
+        // app.UseMiddleware<AutomaticDbMigratorMiddleware>();
         app.UseMiddleware<TraceIdMiddleware>();
         app.UseMiddleware<ResponseEnrichmentMiddleware>();
         app.UseMiddleware<GlobalExceptionHandlerMiddleware>();

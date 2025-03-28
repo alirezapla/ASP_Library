@@ -1,5 +1,6 @@
 ﻿using System.Reflection;
 using BookLibraryAPIDemo.Domain.Entities;
+using BookLibraryAPIDemo.Domain.Entities.RBAC;
 using BookLibraryAPIDemo.Infrastructure.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
@@ -23,6 +24,9 @@ namespace BookLibraryAPIDemo.Infrastructure.Context
         public DbSet<Category> Categories { get; set; }
         public DbSet<Review> Reviews { get; set; }
         public DbSet<BookDetail> BookDetails { get; set; }
+        public DbSet<User> Users { get; set; }
+
+
 
 
         protected override void OnModelCreating(ModelBuilder builder)

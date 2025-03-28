@@ -4,6 +4,7 @@ using BookLibraryAPIDemo.Application.DTO.Author;
 using BookLibraryAPIDemo.Application.Models;
 using BookLibraryAPIDemo.Application.Queries.Authors;
 using BookLibraryAPIDemo.Infrastructure.Repositories;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BookLibraryAPIDemo.Controllers
@@ -12,6 +13,7 @@ namespace BookLibraryAPIDemo.Controllers
     public class AuthorsController : BaseApiController
     {
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> CreateAuthorAsync([FromBody] CreateAuthorDTO model)
         {
             if (!ModelState.IsValid)
@@ -21,6 +23,7 @@ namespace BookLibraryAPIDemo.Controllers
         }
 
         [HttpGet]
+        [AllowAnonymous]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PagedResult<AuthorDTO>))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetAuthorsAsync([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10,
@@ -34,12 +37,14 @@ namespace BookLibraryAPIDemo.Controllers
         }
 
         [HttpGet("{id}")]
+        [Authorize(Policy = "CanRead")]
         public async Task<IActionResult> GetAuthorByIdAsync(string id)
         {
             return Ok(await Mediator.Send(new GetAuthorById() {AuthorId = id}));
         }
 
         [HttpGet("{id}/books")]
+        [Authorize(Policy = "CanRead")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PagedResult<AuthorWithBooksDto>))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetAuthorByIdWithBooksAsync([FromRoute] string id,
@@ -54,6 +59,7 @@ namespace BookLibraryAPIDemo.Controllers
         }
 
         [HttpPut("{id}")]
+        [Authorize(Policy = "CanWrite")]
         public async Task<IActionResult> UpdateAuthorAsync([FromRoute] string id, [FromBody] UpdateAuthorDTO model)
         {
             return Ok(await Mediator.Send(new UpdateAuthor {Id = id, Author = model}));
@@ -61,6 +67,7 @@ namespace BookLibraryAPIDemo.Controllers
 
 
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteAuthorAsync([FromRoute] string id)
         {
             await Mediator.Send(new DeleteAuthor {AuthorId = id});

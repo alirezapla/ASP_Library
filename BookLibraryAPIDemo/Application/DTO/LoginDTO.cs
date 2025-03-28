@@ -4,9 +4,10 @@ namespace BookLibraryAPIDemo.Application.DTO
 {
     public class LoginDTO
     {
-        [Required] public string Password { get; set; }
+        [Required(ErrorMessage = "Password is required")]
+        public string Password { get; set; }
 
-        [Required, RegularExpression("^(.+)@(.+)$")]
+        [Required(ErrorMessage = "Email is required"), RegularExpression("^(.+)@(.+)$")]
         public string Email { get; set; }
     }
 }

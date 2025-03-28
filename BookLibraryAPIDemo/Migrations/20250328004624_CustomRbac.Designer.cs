@@ -4,6 +4,7 @@ using BookLibraryAPIDemo.Infrastructure.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BookLibraryAPIDemo.Migrations
 {
     [DbContext(typeof(BookLibraryContext))]
-    partial class BookLibraryContextModelSnapshot : ModelSnapshot
+    [Migration("20250328004624_CustomRbac")]
+    partial class CustomRbac
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -230,7 +233,7 @@ namespace BookLibraryAPIDemo.Migrations
                         {
                             Id = "470389e2-4c68-4efd-850a-ed3282ae236e",
                             CreatedBy = "system",
-                            CreatedDate = new DateTime(2025, 3, 28, 13, 50, 2, 470, DateTimeKind.Utc).AddTicks(3081),
+                            CreatedDate = new DateTime(2025, 3, 28, 0, 46, 24, 6, DateTimeKind.Utc).AddTicks(6342),
                             DeletedBy = "",
                             Description = "This is about Tech",
                             IsDeleted = false,
@@ -241,7 +244,7 @@ namespace BookLibraryAPIDemo.Migrations
                         {
                             Id = "8fece538-ab92-4316-9c19-6693514dc283",
                             CreatedBy = "system",
-                            CreatedDate = new DateTime(2025, 3, 28, 13, 50, 2, 470, DateTimeKind.Utc).AddTicks(3091),
+                            CreatedDate = new DateTime(2025, 3, 28, 0, 46, 24, 6, DateTimeKind.Utc).AddTicks(6355),
                             DeletedBy = "",
                             Description = "Books on Finance ",
                             IsDeleted = false,
@@ -252,7 +255,7 @@ namespace BookLibraryAPIDemo.Migrations
                         {
                             Id = "bd97c0cc-7e68-4a59-935d-8d7d12269cbe",
                             CreatedBy = "system",
-                            CreatedDate = new DateTime(2025, 3, 28, 13, 50, 2, 470, DateTimeKind.Utc).AddTicks(3099),
+                            CreatedDate = new DateTime(2025, 3, 28, 0, 46, 24, 6, DateTimeKind.Utc).AddTicks(6362),
                             DeletedBy = "",
                             Description = "Books on science and nature",
                             IsDeleted = false,
@@ -427,9 +430,6 @@ namespace BookLibraryAPIDemo.Migrations
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime>("DateOfBirth")
-                        .HasColumnType("datetime2");
-
                     b.Property<string>("DeletedBy")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -441,8 +441,7 @@ namespace BookLibraryAPIDemo.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("bit");
@@ -489,9 +488,6 @@ namespace BookLibraryAPIDemo.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Email", "IsDeleted")
-                        .IsUnique();
-
                     b.ToTable("Users", (string)null);
 
                     b.HasData(
@@ -499,12 +495,10 @@ namespace BookLibraryAPIDemo.Migrations
                         {
                             Id = "32F8F8D1-5510-45D9-9B39-29A35FDD85EC",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "daa294b7-0183-4384-b9f6-da344edc79a4",
+                            ConcurrencyStamp = "3807f8fd-a453-4e53-ab39-34d347550f44",
                             CreatedBy = "system",
-                            CreatedDate = new DateTime(2025, 3, 28, 13, 50, 2, 477, DateTimeKind.Utc).AddTicks(6110),
-                            DateOfBirth = new DateTime(1989, 4, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedDate = new DateTime(2025, 3, 28, 0, 46, 24, 14, DateTimeKind.Utc).AddTicks(1316),
                             DeletedBy = "",
-                            Email = "a@h.c",
                             EmailConfirmed = false,
                             IsDeleted = false,
                             LockoutEnabled = false,
