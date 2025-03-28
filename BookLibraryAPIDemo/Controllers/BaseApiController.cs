@@ -1,10 +1,11 @@
 ﻿using BookLibraryAPIDemo.Infrastructure.Filters;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BookLibraryAPIDemo.Controllers
 {
-    // [Authorize]
+    [Authorize]
     [ServiceFilter(typeof(LogActionFilter))]
     public class BaseApiController : ControllerBase
     {

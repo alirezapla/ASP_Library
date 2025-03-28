@@ -4,6 +4,7 @@ using BookLibraryAPIDemo.Application.DTO;
 using BookLibraryAPIDemo.Application.DTO.category;
 using BookLibraryAPIDemo.Application.Queries.Categories;
 using BookLibraryAPIDemo.Infrastructure.Repositories;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BookLibraryAPIDemo.Controllers
@@ -12,6 +13,7 @@ namespace BookLibraryAPIDemo.Controllers
     public class CategoryController : BaseApiController
     {
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> CreateCategoryAsync([FromBody] CreateCategoryDTO model)
         {
             if (!ModelState.IsValid)
@@ -22,6 +24,7 @@ namespace BookLibraryAPIDemo.Controllers
 
 
         [HttpGet]
+        [AllowAnonymous]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PagedResult<CategoryDTO>))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetCategoriesAsync([FromQuery] int pageNumber = 1,
@@ -32,12 +35,14 @@ namespace BookLibraryAPIDemo.Controllers
 
 
         [HttpGet("{id}")]
+        [Authorize(Policy = "CanRead")]
         public async Task<IActionResult> GetCategoryByIdAsync([FromRoute] string id)
         {
             return Ok(await Mediator.Send(new GetCategoryById() {CategoryId = id}));
         }
 
         [HttpGet("{id}/books")]
+        [Authorize(Policy = "CanRead")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PagedResult<CategoryWithBooksDTO>))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetCategoryByIdWithBooksAsync([FromRoute] string id,
@@ -50,6 +55,7 @@ namespace BookLibraryAPIDemo.Controllers
 
 
         [HttpPut("{id}")]
+        [Authorize(Policy = "CanWrite")]
         public async Task<IActionResult> UpdateCategoryAsync([FromRoute] string id, [FromBody] UpdateCategoryDTO model)
         {
             return Ok(await Mediator.Send(new UpdateCategory {Id = id, Category = model}));
@@ -57,6 +63,7 @@ namespace BookLibraryAPIDemo.Controllers
 
 
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteCategoryAsync([FromRoute] string id)
         {
             await Mediator.Send(new DeleteCategory {CategoryId = id});
