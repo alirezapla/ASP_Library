@@ -76,33 +76,36 @@ namespace BookLibraryAPIDemo.Infrastructure.Repositories
         }
 
 
-        public async Task<(List<T> Items, int TotalCount)> GetAllAsync(PaginationParams paginationParams,
-            ISpecification<T> spec = null, SortParams sortParams = null)
+        public async Task<(List<T> Items, int TotalCount)> GetAllAsync(IRichSpecification<T> spec,
+            SortParams sortParams = null)
         {
-            var query = _context.Set<T>().Where(e => e.IsDeleted == false).AsQueryable();
+            var query = _context.Set<T>().ApplySpecification(spec).Where(e => e.IsDeleted == false).AsQueryable();
 
-            if (spec != null)
-            {
-                if (spec.Criteria != null)
-                {
-                    query = query.Where(spec.Criteria);
-                }
-
-                if (spec.Includes != null)
-                {
-                    foreach (var include in spec.Includes)
-                    {
-                        query = query.Include(include);
-                    }
-                }
-            }
-
+            // if (filter != null)
+            // {
+            //     query = query.Where(filter);
+            // }
+            //
+            // if (spec != null)
+            // {
+            //     if (spec.Criteria != null)
+            //     {
+            //         query = query.Where(spec.Criteria);
+            //     }
+            //
+            //     if (spec.Includes != null)
+            //     {
+            //         foreach (var include in spec.Includes)
+            //         {
+            //             query = query.Include(include);
+            //         }
+            //     }
+            // }
+            //
             query = ApplySorting(query, sortParams);
-
+            //
             var totalCount = await query.CountAsync();
             var items = await query
-                .Skip((paginationParams.Number - 1) * paginationParams.Size)
-                .Take(paginationParams.Size)
                 .ToListAsync();
 
             return (items, totalCount);

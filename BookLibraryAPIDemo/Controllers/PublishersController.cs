@@ -27,14 +27,15 @@ namespace BookLibraryAPIDemo.Controllers
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PagedResult<PublisherDTO>))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetPublishersAsync([FromQuery] int pageNumber = 1,
-            [FromQuery] int pageSize = 10, [FromQuery] string sortBy = "PublisherName", [FromQuery] bool sortDescending = false)
-
+            [FromQuery] int pageSize = 10, [FromQuery] string sortBy = "PublisherName",
+            [FromQuery] bool sortDescending = false, [FromQuery] List<string> filterProperty = null,
+            [FromQuery] List<string> filterValue = null, [FromQuery] List<string> filterOperator = null)
         {
-            return Ok(await Mediator.Send(new GetAllPublisher()
-            {
-                PaginationParams = new PaginationParams() {Number = pageNumber, Size = pageSize},
-                SortParams = new SortParams() {SortBy = sortBy, SortDescending = sortDescending}
-            }));
+            var queryParams = BuildQueryParams(
+                filterProperty, filterValue, filterOperator,
+                pageNumber, pageSize, sortBy, sortDescending);
+
+            return Ok(await Mediator.Send(new GetAllPublisher() {QueryParams = queryParams}));
         }
 
         [HttpGet("{id}")]

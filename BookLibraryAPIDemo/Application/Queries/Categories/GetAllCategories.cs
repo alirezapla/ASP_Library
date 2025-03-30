@@ -11,8 +11,7 @@ namespace BookLibraryAPIDemo.Application.Queries.Categories
 {
     public class GetAllCategories : IRequest<PagedResult<CategoryDTO>>
     {
-        public PaginationParams PaginationParams { get; set; }
-        public SortParams SortParams { get; set; }
+        public QueryParams QueryParams { get; set; }
     }
 
     public class GetAllCategoriesHandler : IRequestHandler<GetAllCategories, PagedResult<CategoryDTO>>
@@ -29,16 +28,24 @@ namespace BookLibraryAPIDemo.Application.Queries.Categories
         public async Task<PagedResult<CategoryDTO>> Handle(GetAllCategories request,
             CancellationToken cancellationToken)
         {
-            var (allCategories, totalCount) =
-                await _repository.GetAllAsync(request.PaginationParams, sortParams:request.SortParams);
+            var (allCategories, totalCount) = await _repository.GetAllAsync(BuildSpecification(request.QueryParams),
+                request.QueryParams.SortParams);
             var results = _mapper.Map<List<CategoryDTO>>(allCategories);
-            return new PagedResult<CategoryDTO>
+            return new PagedResult<CategoryDTO>(results, totalCount, request.QueryParams.PaginationParams);
+        }
+
+        private static IRichSpecification<Category> BuildSpecification(QueryParams queryParams)
+        {
+            var builder = new SpecificationBuilder<Category>();
+
+            foreach (var filter in queryParams.Filters)
             {
-                Items = results,
-                TotalCount = totalCount,
-                PageNumber = request.PaginationParams.Number,
-                PageSize = request.PaginationParams.Size
-            };
+                builder.Where(filter);
+            }
+
+            return builder.Include(a => a.Books)
+                .ApplyPaging(queryParams.PaginationParams)
+                .Build();
         }
     }
 }
