@@ -1,3 +1,6 @@
+using System.Linq.Expressions;
+using BookLibraryAPIDemo.Application.Models;
+
 namespace BookLibraryAPIDemo.Infrastructure.Repositories;
 
 public static class DynamicFilterBuilder
