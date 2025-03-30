@@ -32,13 +32,15 @@ namespace BookLibraryAPIDemo.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetBooksAsync(
             [FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10,
-            [FromQuery] string sortBy = "Title", [FromQuery] bool sortDescending = false)
+            [FromQuery] string sortBy = "Title", [FromQuery] bool sortDescending = false,
+            [FromQuery] List<string> filterProperty = null, [FromQuery] List<string> filterValue = null,
+            [FromQuery] List<string> filterOperator = null)
         {
-            return Ok(await Mediator.Send(new GetAllBook
-            {
-                PaginationParams = new PaginationParams() {Number = pageNumber, Size = pageSize},
-                SortParams = new SortParams() {SortBy = sortBy, SortDescending = sortDescending}
-            }));
+            var queryParams = BuildQueryParams(
+                filterProperty, filterValue, filterOperator,
+                pageNumber, pageSize, sortBy, sortDescending);
+
+            return Ok(await Mediator.Send(new GetAllBook {QueryParams = queryParams}));
         }
 
         [HttpGet("{id}")]
@@ -87,15 +89,15 @@ namespace BookLibraryAPIDemo.Controllers
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PagedResult<ReviewDTO>))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetAllReviews([FromRoute] string id,
-            [FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10,
-            [FromQuery] string sortBy = "Title", [FromQuery] bool sortDescending = false
-        )
+            [FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10, [FromQuery] string sortBy = "Title",
+            [FromQuery] bool sortDescending = false, [FromQuery] List<string> filterProperty = null,
+            [FromQuery] List<string> filterValue = null, [FromQuery] List<string> filterOperator = null)
         {
-            return Ok(await Mediator.Send(new GetAllReviews()
-            {
-                PaginationParams = new PaginationParams() {Number = pageNumber, Size = pageSize},
-                SortParams = new SortParams() {SortBy = sortBy, SortDescending = sortDescending}
-            }));
+            var queryParams = BuildQueryParams(
+                filterProperty, filterValue, filterOperator,
+                pageNumber, pageSize, sortBy, sortDescending);
+
+            return Ok(await Mediator.Send(new GetAllReviews() {QueryParams = queryParams}));
         }
 
         [HttpGet(("{id}/reviews/{reviewId}"))]
