@@ -10,8 +10,7 @@ namespace BookLibraryAPIDemo.Application.Queries.Authors
 {
     public class GetAllAuthors : IRequest<PagedResult<AuthorDTO>>
     {
-        public PaginationParams PaginationParams { get; set; }
-        public SortParams SortParams { get; set; }
+        public QueryParams QueryParams { get; set; }
     }
 
     public class GetAllAuthorsHandler : IRequestHandler<GetAllAuthors, PagedResult<AuthorDTO>>
@@ -27,16 +26,25 @@ namespace BookLibraryAPIDemo.Application.Queries.Authors
 
         public async Task<PagedResult<AuthorDTO>> Handle(GetAllAuthors request, CancellationToken cancellationToken)
         {
-            var (allAuthors, totalCount) =
-                await _repository.GetAllAsync(request.PaginationParams, sortParams: request.SortParams);
+            var (allAuthors, totalCount) = await _repository.GetAllAsync(BuildSpecification(request.QueryParams),
+                request.QueryParams.SortParams);
+
             var results = _mapper.Map<List<AuthorDTO>>(allAuthors);
-            return new PagedResult<AuthorDTO>
+            return new PagedResult<AuthorDTO>(results, totalCount, request.QueryParams.PaginationParams);
+        }
+
+        private static IRichSpecification<Author> BuildSpecification(QueryParams queryParams)
+        {
+            var builder = new SpecificationBuilder<Author>();
+
+            foreach (var filter in queryParams.Filters)
             {
-                Items = results,
-                TotalCount = totalCount,
-                PageNumber = request.PaginationParams.Number,
-                PageSize = request.PaginationParams.Size
-            };
+                builder.Where(filter);
+            }
+
+            return builder.Include(a => a.Books)
+                .ApplyPaging(queryParams.PaginationParams)
+                .Build();
         }
     }
 }

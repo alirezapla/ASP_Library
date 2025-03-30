@@ -10,8 +10,7 @@ namespace BookLibraryAPIDemo.Application.Queries.Reviews;
 
 public class GetAllReviews : IRequest<PagedResult<ReviewDTO>>
 {
-    public PaginationParams PaginationParams { get; set; }
-    public SortParams SortParams { get; set; }
+    public QueryParams QueryParams { get; set; }
 }
 
 public class GetAllReviewsHandler : IRequestHandler<GetAllReviews, PagedResult<ReviewDTO>>
@@ -28,14 +27,21 @@ public class GetAllReviewsHandler : IRequestHandler<GetAllReviews, PagedResult<R
     public async Task<PagedResult<ReviewDTO>> Handle(GetAllReviews request, CancellationToken cancellationToken)
     {
         var (allReviews, totalCount) =
-            await _repository.GetAllAsync(request.PaginationParams, sortParams: request.SortParams);
+            await _repository.GetAllAsync(BuildSpecification(request.QueryParams), request.QueryParams.SortParams);
         var results = _mapper.Map<List<ReviewDTO>>(allReviews);
-        return new PagedResult<ReviewDTO>
+        return new PagedResult<ReviewDTO>(results, totalCount, request.QueryParams.PaginationParams);
+    }
+
+    private static IRichSpecification<Review> BuildSpecification(QueryParams queryParams)
+    {
+        var builder = new SpecificationBuilder<Review>();
+
+        foreach (var filter in queryParams.Filters)
         {
-            Items = results,
-            TotalCount = totalCount,
-            PageNumber = request.PaginationParams.Number,
-            PageSize = request.PaginationParams.Size
-        };
+            builder.Where(filter);
+        }
+
+        return builder.ApplyPaging(queryParams.PaginationParams)
+            .Build();
     }
 }
