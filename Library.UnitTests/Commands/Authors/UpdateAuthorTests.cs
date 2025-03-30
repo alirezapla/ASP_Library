@@ -36,7 +36,7 @@ public class UpdateAuthorHandlerTests
                 Bio = "Updated Bio"
             }
         };
-        _repository.GetByIdAsync(request.Id)!.Returns((Author)null);
+        _repository.GetByIdAsync(request.Id)!.Returns((Author) null);
 
         // Act
         Func<Task> act = async () => await _handler.Handle(request, CancellationToken.None);
@@ -50,7 +50,7 @@ public class UpdateAuthorHandlerTests
     public async Task UpdateAuthor_ShouldUpdateAuthor_WhenAuthorExists()
     {
         // Arrange
-        var request = new UpdateAuthor {Id = "1", Author = new UpdateAuthorDTO {Bio = "Updated Author"}};
+        var request = new UpdateAuthor {Id = "1", Author = new UpdateAuthorDTO {Bio = "New Bio Author"}};
         var existingAuthor = new Author {Id = "1", Name = "Old Author"};
         var updatedAuthor = new Author {Id = "1", Name = "Updated Author"};
         var expectedDto = new AuthorDTO {Name = "Updated Author"};

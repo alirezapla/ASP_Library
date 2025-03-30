@@ -3,40 +3,40 @@ using BookLibraryAPIDemo.Infrastructure.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace BookLibraryAPIDemo.Infrastructure.Repositories;
-public class SpecificationEvaluator<T> where T : class
+
+public static class SpecificationEvaluator
 {
-    public static IQueryable<T> GetQuery(IQueryable<T> inputQuery, IRichSpecification<T> specification)
+    public static IQueryable<T> ApplySpecification<T>(this IQueryable<T> query, IRichSpecification<T> spec) where T : class
     {
-        var query = inputQuery;
 
-        if (specification.Criteria != null)
+        if (spec.Criteria != null)
         {
-            query = query.Where(specification.Criteria);
+            query = query.Where(spec.Criteria);
         }
 
-        if (specification.Includes != null)
+        if (spec.Includes != null)
         {
-            query = specification.Includes.Aggregate(query, (current, include) => current.Include(include));
+            query = spec.Includes.Aggregate(query, (current, include) => current.Include(include));
         }
 
-        if (specification.IncludeStrings != null)
+        if (spec.IncludeStrings != null)
         {
-            query = specification.IncludeStrings.Aggregate(query, (current, include) => current.Include(include));
+            query = spec.IncludeStrings.Aggregate(query, (current, include) => current.Include(include));
         }
 
-        if (specification.OrderBy != null)
+        if (spec.OrderBy != null)
         {
-            query = query.OrderBy(specification.OrderBy);
+            query = query.OrderBy(spec.OrderBy);
         }
 
-        if (specification.OrderByDescending != null)
+        if (spec.OrderByDescending != null)
         {
-            query = query.OrderByDescending(specification.OrderByDescending);
+            query = query.OrderByDescending(spec.OrderByDescending);
         }
 
-        if (specification.IsPagingEnabled)
+        if (spec.IsPagingEnabled)
         {
-            query = query.Skip(specification.Skip).Take(specification.Take);
+            query = query.Skip(spec.Skip).Take(spec.Take);
         }
 
         return query;

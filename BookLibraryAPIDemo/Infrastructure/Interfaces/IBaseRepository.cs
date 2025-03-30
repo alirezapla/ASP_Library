@@ -7,9 +7,7 @@ namespace BookLibraryAPIDemo.Infrastructure.Interfaces
     {
         Task<List<T>> GetAllAsync();
 
-        // Task<List<T>> GetAllBookAsync(ISpecification<T> spec = null);
-        Task<(List<T> Items, int TotalCount)> GetAllAsync(PaginationParams paginationParams,
-            ISpecification<T> spec = null,
+        Task<(List<T> Items, int TotalCount)> GetAllAsync(IRichSpecification<T> specification,
             SortParams sortParams = null);
 
         Task<T> GetByIdAsync(string id);
