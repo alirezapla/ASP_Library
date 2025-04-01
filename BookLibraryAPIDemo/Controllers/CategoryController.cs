@@ -82,5 +82,6 @@ namespace BookLibraryAPIDemo.Controllers
             await Mediator.Send(new DeleteCategory {CategoryId = id});
             return NoContent();
         }
+        
     }
 }
