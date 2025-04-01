@@ -82,12 +82,6 @@ namespace BookLibraryAPIDemo.Controllers
             await Mediator.Send(new DeleteCategory {CategoryId = id});
             return NoContent();
         }
-
-        [HttpPut("export")]
-        [Authorize(Policy = "CanRead")]
-        public async Task<IActionResult> ExportCsvAsync()
-        {
-            return Ok(Task.CompletedTask);
-        }
+        
     }
 }
