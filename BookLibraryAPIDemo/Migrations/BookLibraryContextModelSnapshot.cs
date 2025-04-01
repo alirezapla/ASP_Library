@@ -162,6 +162,9 @@ namespace BookLibraryAPIDemo.Migrations
                     b.Property<double>("Price")
                         .HasColumnType("float");
 
+                    b.Property<DateTime>("PublicationDate")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -230,7 +233,7 @@ namespace BookLibraryAPIDemo.Migrations
                         {
                             Id = "470389e2-4c68-4efd-850a-ed3282ae236e",
                             CreatedBy = "system",
-                            CreatedDate = new DateTime(2025, 3, 28, 13, 50, 2, 470, DateTimeKind.Utc).AddTicks(3081),
+                            CreatedDate = new DateTime(2025, 4, 1, 11, 40, 13, 522, DateTimeKind.Utc).AddTicks(6862),
                             DeletedBy = "",
                             Description = "This is about Tech",
                             IsDeleted = false,
@@ -241,7 +244,7 @@ namespace BookLibraryAPIDemo.Migrations
                         {
                             Id = "8fece538-ab92-4316-9c19-6693514dc283",
                             CreatedBy = "system",
-                            CreatedDate = new DateTime(2025, 3, 28, 13, 50, 2, 470, DateTimeKind.Utc).AddTicks(3091),
+                            CreatedDate = new DateTime(2025, 4, 1, 11, 40, 13, 522, DateTimeKind.Utc).AddTicks(6872),
                             DeletedBy = "",
                             Description = "Books on Finance ",
                             IsDeleted = false,
@@ -252,7 +255,7 @@ namespace BookLibraryAPIDemo.Migrations
                         {
                             Id = "bd97c0cc-7e68-4a59-935d-8d7d12269cbe",
                             CreatedBy = "system",
-                            CreatedDate = new DateTime(2025, 3, 28, 13, 50, 2, 470, DateTimeKind.Utc).AddTicks(3099),
+                            CreatedDate = new DateTime(2025, 4, 1, 11, 40, 13, 522, DateTimeKind.Utc).AddTicks(6879),
                             DeletedBy = "",
                             Description = "Books on science and nature",
                             IsDeleted = false,
@@ -499,9 +502,9 @@ namespace BookLibraryAPIDemo.Migrations
                         {
                             Id = "32F8F8D1-5510-45D9-9B39-29A35FDD85EC",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "daa294b7-0183-4384-b9f6-da344edc79a4",
+                            ConcurrencyStamp = "cc294785-2149-4780-b7ea-6de13e5ab73b",
                             CreatedBy = "system",
-                            CreatedDate = new DateTime(2025, 3, 28, 13, 50, 2, 477, DateTimeKind.Utc).AddTicks(6110),
+                            CreatedDate = new DateTime(2025, 4, 1, 11, 40, 13, 530, DateTimeKind.Utc).AddTicks(4489),
                             DateOfBirth = new DateTime(1989, 4, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             DeletedBy = "",
                             Email = "a@h.c",
