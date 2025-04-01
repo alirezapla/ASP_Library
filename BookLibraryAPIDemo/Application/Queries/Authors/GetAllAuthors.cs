@@ -42,8 +42,7 @@ namespace BookLibraryAPIDemo.Application.Queries.Authors
                 builder.Where(filter);
             }
 
-            return builder.Include(a => a.Books)
-                .ApplyPaging(queryParams.PaginationParams)
+            return builder.ApplyPaging(queryParams.PaginationParams)
                 .Build();
         }
     }
