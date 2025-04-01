@@ -18,14 +18,16 @@ namespace BookLibraryAPIDemo.MiddleWares
                 return;
             }
 
+
             var originalBodyStream = context.Response.Body;
+            
             using (var newBodyStream = new MemoryStream())
             {
                 context.Response.Body = newBodyStream;
 
                 await _next(context);
 
-                if (context.Response.StatusCode == StatusCodes.Status200OK)
+                if (context.Response.StatusCode == StatusCodes.Status200OK && context.Response.ContentType != "text/csv")
                 {
                     var traceId = context.Response.Headers["X-Trace-Id"].ToString();
                     newBodyStream.Seek(0, SeekOrigin.Begin);

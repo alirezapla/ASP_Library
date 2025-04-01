@@ -1,4 +1,5 @@
-﻿using BookLibraryAPIDemo.Application.Commands.BookDetails;
+﻿using System.Text;
+using BookLibraryAPIDemo.Application.Commands.BookDetails;
 using BookLibraryAPIDemo.Application.Commands.Books;
 using BookLibraryAPIDemo.Application.Commands.Reviews;
 using BookLibraryAPIDemo.Application.DTO;
@@ -123,6 +124,22 @@ namespace BookLibraryAPIDemo.Controllers
         public async Task<IActionResult> CreateReview([FromRoute] string id, [FromRoute] string reviewId)
         {
             return Ok(await Mediator.Send(new DeleteReview() {ReviewId = reviewId, BookId = id}));
+        }
+
+        [HttpGet("export/csv")]
+        [AllowAnonymous]
+        [Produces("text/csv")]
+        public async Task<IActionResult> ExportCsv([FromQuery] List<string> columns,
+            [FromQuery] string sortBy = "Title", [FromQuery] bool sortDescending = false,
+            [FromQuery] List<string> filterProperty = null, [FromQuery] List<string> filterValue = null,
+            [FromQuery] List<string> filterOperator = null)
+        {
+            var queryParams = BuildQueryParams(
+                filterProperty, filterValue, filterOperator, sortBy: sortBy, sortDescending: sortDescending);
+            var csvData = await Mediator.Send(new ExportAllBooksAsCsv() {Columns = columns, QueryParams = queryParams});
+
+            var fileContent = Encoding.UTF8.GetBytes(csvData);
+            return File(fileContent, "text/csv", $"books_{DateTime.UtcNow.Ticks}.csv");
         }
     }
 }
