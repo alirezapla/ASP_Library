@@ -5,9 +5,9 @@ namespace BookLibraryAPIDemo.Infrastructure.Interfaces
 {
     public interface IBaseRepository<T>
     {
-        Task<List<T>> GetAllAsync();
+        Task<IReadOnlyList<T>> GetAllAsync();
 
-        Task<(List<T> Items, int TotalCount)> GetAllAsync(IRichSpecification<T> specification,
+        Task<(IReadOnlyList<T> Items, int TotalCount)> GetAllAsync(IRichSpecification<T> specification,
             SortParams sortParams = null);
 
         Task<T> GetByIdAsync(string id);

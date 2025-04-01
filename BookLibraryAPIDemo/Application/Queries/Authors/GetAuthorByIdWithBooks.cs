@@ -1,12 +1,10 @@
 ﻿using AutoMapper;
-using BookLibraryAPIDemo.Application.DTO;
 using BookLibraryAPIDemo.Application.DTO.Author;
 using BookLibraryAPIDemo.Application.Exceptions;
 using BookLibraryAPIDemo.Application.Models;
 using BookLibraryAPIDemo.Domain.Entities;
 using BookLibraryAPIDemo.Infrastructure.Interfaces;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 
 namespace BookLibraryAPIDemo.Application.Queries.Authors
 {
@@ -39,10 +37,21 @@ namespace BookLibraryAPIDemo.Application.Queries.Authors
 
             var paginatedBooks = author.Books
                 .Skip((request.PaginationParams.Number - 1) * request.PaginationParams.Size)
-                .Take(request.PaginationParams.Size)
-                .OrderBy(b => EF.Property<object>(b, request.SortParams.SortBy))
-                .ToList();
-            author.Books = paginatedBooks;
+                .Take(request.PaginationParams.Size);
+
+
+            var sortBy = request.SortParams.SortBy;
+            paginatedBooks = sortBy switch
+            {
+                "Title" => paginatedBooks.OrderBy(b => b.Title),
+                "CreatedDate" => paginatedBooks.OrderBy(b => b.CreatedDate),
+                "UpdatedDate" => paginatedBooks.OrderBy(b => b.UpdatedDate),
+                "AuthorId" => paginatedBooks.OrderBy(b => b.AuthorId),
+                _ => paginatedBooks
+            };
+
+            author.Books = paginatedBooks.ToList();
+
             return _mapper.Map<AuthorWithBooksDto>(author);
         }
     }

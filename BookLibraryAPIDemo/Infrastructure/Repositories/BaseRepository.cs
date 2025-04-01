@@ -9,34 +9,25 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BookLibraryAPIDemo.Infrastructure.Repositories
 {
-    public class BaseRepository<T> : IBaseRepository<T> where T : class, IEntity
+    public class BaseRepository<T>(BookLibraryContext context) : IBaseRepository<T>
+        where T : class, IEntity
     {
-        private readonly BookLibraryContext _context;
-
-        public BaseRepository(BookLibraryContext context)
-        {
-            _context = context;
-        }
-
         public async Task<T> CreateAsync(T entity)
         {
             try
             {
-                await _context.Set<T>().AddAsync(entity);
-                await _context.SaveChangesAsync();
+                await context.Set<T>().AddAsync(entity);
+                await context.SaveChangesAsync();
                 return entity;
             }
 
             catch (Exception ex)
             {
-                if (ex.InnerException is SqlException sqlEx && (sqlEx.Number == 2601 || sqlEx.Number == 2627))
-                {
-                    var duplicateValue = ExtractDuplicateValueFromErrorMessage(sqlEx.Message);
-                    throw new DuplicateKeyException(
-                        $"A duplicate key violation occurred. The value '{duplicateValue}' already exists.", ex);
-                }
-
-                throw new RepositoryException("An error occurred while creating the entity.", ex);
+                if (ex.InnerException is not SqlException sqlEx || (sqlEx.Number != 2601 && sqlEx.Number != 2627))
+                    throw new RepositoryException("An error occurred while creating the entity.", ex);
+                var duplicateValue = ExtractDuplicateValueFromErrorMessage(sqlEx.Message);
+                throw new DuplicateKeyException(
+                    $"A duplicate key violation occurred. The value '{duplicateValue}' already exists.", ex);
             }
         }
 
@@ -45,8 +36,8 @@ namespace BookLibraryAPIDemo.Infrastructure.Repositories
         {
             try
             {
-                _context.Set<T>().Remove(entity);
-                await _context.SaveChangesAsync();
+                context.Set<T>().Remove(entity);
+                await context.SaveChangesAsync();
                 return entity;
             }
             catch (Exception ex)
@@ -60,8 +51,8 @@ namespace BookLibraryAPIDemo.Infrastructure.Repositories
             try
             {
                 entity.IsDeleted = true;
-                _context.Set<T>().Update(entity);
-                await _context.SaveChangesAsync();
+                context.Set<T>().Update(entity);
+                await context.SaveChangesAsync();
                 return entity;
             }
             catch (Exception ex)
@@ -70,67 +61,42 @@ namespace BookLibraryAPIDemo.Infrastructure.Repositories
             }
         }
 
-        public async Task<List<T>> GetAllAsync()
+        public async Task<IReadOnlyList<T>> GetAllAsync()
         {
-            return await _context.Set<T>().AsNoTracking().Where(e => e.IsDeleted == false).ToListAsync();
+            return await context.Set<T>().AsNoTracking().Where(static e => e.IsDeleted == false).ToListAsync();
         }
 
 
-        public async Task<(List<T> Items, int TotalCount)> GetAllAsync(IRichSpecification<T> spec,
+        public async Task<(IReadOnlyList<T> Items, int TotalCount)> GetAllAsync(IRichSpecification<T> spec,
             SortParams sortParams = null)
         {
-            var query = _context.Set<T>().ApplySpecification(spec).Where(e => e.IsDeleted == false).AsQueryable();
-
-            // if (filter != null)
-            // {
-            //     query = query.Where(filter);
-            // }
-            //
-            // if (spec != null)
-            // {
-            //     if (spec.Criteria != null)
-            //     {
-            //         query = query.Where(spec.Criteria);
-            //     }
-            //
-            //     if (spec.Includes != null)
-            //     {
-            //         foreach (var include in spec.Includes)
-            //         {
-            //             query = query.Include(include);
-            //         }
-            //     }
-            // }
-            //
+            var query = context.Set<T>().AsNoTracking().ApplySpecification(spec).AsQueryable();
+            
             query = ApplySorting(query, sortParams);
-            //
+            
             var totalCount = await query.CountAsync();
             var items = await query
                 .ToListAsync();
-
             return (items, totalCount);
         }
 
         public async Task<T> GetByIdAsync(string id)
         {
-            return await _context.Set<T>().FindAsync(id);
+            return await context.Set<T>().FindAsync(id);
         }
 
         public async Task<T> GetByIdAsync(string id, Expression<Func<T, object>> include)
         {
-            var query = _context.Set<T>().Where(e => e.IsDeleted == false).AsQueryable();
-
-            query = query.Include(include);
-
-            return await query.FirstOrDefaultAsync(arg => arg.Id == id);
+            var query = context.Set<T>().Where(static e => e.IsDeleted == false).AsQueryable();
+            return await query.Include(include).FirstOrDefaultAsync(arg => arg.Id == id);
         }
 
         public async Task<T> UpdateAsync(T entity)
         {
             try
             {
-                _context.Set<T>().Update(entity);
-                await _context.SaveChangesAsync();
+                context.Set<T>().Update(entity);
+                await context.SaveChangesAsync();
                 return entity;
             }
             catch (Exception ex)

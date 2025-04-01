@@ -51,7 +51,7 @@ namespace BookLibraryAPIDemo.Application.Commands.Auth
                     throw new LogInFailedException("Login failed. Wrong email or password");
                 }
 
-                var token = await CreateToken(user);
+                var token = CreateToken(user);
                 return new UserPrincipalDTO
                 {
                     Message = "User logged in successfully",
@@ -66,10 +66,10 @@ namespace BookLibraryAPIDemo.Application.Commands.Auth
             ///  Creating token 
             /// </summary>
             /// <returns></returns>
-            public async Task<string> CreateToken(User user)
+            private string CreateToken(User user)
             {
                 var signingCredentials = GetSigningCredentials();
-                var claims = await GetClaimsAsync(user);
+                var claims = GetClaims(user);
                 var tokenOptions = GenerateTokenOptions(signingCredentials, claims);
 
                 return new JwtSecurityTokenHandler().WriteToken(tokenOptions);
@@ -84,19 +84,20 @@ namespace BookLibraryAPIDemo.Application.Commands.Auth
                 return new SigningCredentials(secret, SecurityAlgorithms.HmacSha256);
             }
 
-            private async Task<List<Claim>> GetClaimsAsync(User user)
+            private static IReadOnlyList<Claim> GetClaims(User user)
             {
-
-                var authClaims = new List<Claim>
+                var roles = user.Roles as IReadOnlyCollection<Role> ?? user.Roles.ToArray();
+                var authClaims = new List<Claim>(4 + roles.Count)
                 {
-                    new Claim(ClaimTypes.Name, user.UserName),
-                    new Claim(ClaimTypes.Sid, user.Id),
-                    new Claim(ClaimTypes.Dns, user.Dns),
-                    new Claim(ClaimTypes.DateOfBirth, user.DateOfBirth.ToString("yyyy-MM-dd"))
+                    new(ClaimTypes.Name, user.UserName),
+                    new(ClaimTypes.Sid, user.Id),
+                    new(ClaimTypes.Dns, user.Dns),
+                    new(ClaimTypes.DateOfBirth, user.DateOfBirth.ToString("yyyy-MM-dd"))
                 };
-                foreach (var userRole in user.Roles)
+
+                foreach (var userRole in roles)
                 {
-                    authClaims.Add(new Claim(ClaimTypes.Role, userRole.Name!));
+                    authClaims.Add(new Claim(ClaimTypes.Role, userRole.Name ?? string.Empty));
                 }
 
                 return authClaims;
@@ -108,7 +109,7 @@ namespace BookLibraryAPIDemo.Application.Commands.Auth
             /// <param name="signingCredentials"></param>
             /// <param name="claims"></param>
             /// <returns></returns>
-            private JwtSecurityToken GenerateTokenOptions(SigningCredentials signingCredentials, List<Claim> claims)
+            private JwtSecurityToken GenerateTokenOptions(SigningCredentials signingCredentials, IReadOnlyList<Claim> claims)
             {
                 var jwtSettings = _configuration.GetSection("JwtSettings");
                 var tokenOptions = new JwtSecurityToken

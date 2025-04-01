@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using System.Diagnostics;
+using AutoMapper;
 using BookLibraryAPIDemo.Application.DTO.Author;
 using BookLibraryAPIDemo.Application.Models;
 using BookLibraryAPIDemo.Domain.Entities;

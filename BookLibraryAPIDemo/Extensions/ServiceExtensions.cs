@@ -31,11 +31,11 @@ namespace BookLibraryAPIDemo.Extensions
     {
         public static void ConfigureServices(this IServiceCollection services, IConfiguration configuration)
         {
+            services.AddSingleton<ILoggerManager, LoggerManager>();
             services.AddControllers(o => { o.UseRoutePrefix("api"); });
 
             services.AddHttpContextAccessor();
 
-            services.AddSingleton<ILoggerManager, LoggerManager>();
 
             services.AddScoped<LogActionFilter>();
             services.AddScoped<CustomAuthorizationFilter>();
@@ -126,7 +126,7 @@ namespace BookLibraryAPIDemo.Extensions
             );
         }
 
-        private static IServiceCollection AddSystemAuthorization(this IServiceCollection serviceProvider)
+        private static void AddSystemAuthorization(this IServiceCollection serviceProvider)
         {
             serviceProvider.AddAuthorization(options =>
             {
@@ -154,7 +154,6 @@ namespace BookLibraryAPIDemo.Extensions
             serviceProvider.AddSingleton<IAuthorizationHandler, CustomAuthorizationHandler>();
             serviceProvider.AddSingleton<IAuthorizationPolicyProvider, PermissionPolicyProvider>();
 
-            return serviceProvider;
         }
 
         private static void ConfigureIdentity(this IServiceCollection services)
